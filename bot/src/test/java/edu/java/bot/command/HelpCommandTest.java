@@ -7,12 +7,11 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-class HelpCommandTest {
+public class HelpCommandTest {
     @Test
     @DisplayName("testHelpCommand")
     void testHelpCommand() {
         Command helpCommand = new HelpCommand(new ArrayList<>());
-
         String actualCommand = helpCommand.command();
 
         assertThat("/help").isEqualTo(actualCommand);
@@ -22,7 +21,6 @@ class HelpCommandTest {
     @DisplayName("testHelpCommandDescription")
     void testHelpCommandDescription() {
         Command helpCommand = new HelpCommand(new ArrayList<>());
-
         String actualDescription = helpCommand.description();
 
         assertThat("Show all available commands").isEqualTo(actualDescription);

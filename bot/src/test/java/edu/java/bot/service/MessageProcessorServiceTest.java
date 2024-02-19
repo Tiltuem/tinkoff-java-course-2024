@@ -1,14 +1,11 @@
 package edu.java.bot.service;
 
-import com.pengrad.telegrambot.model.Chat;
-import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-
-import java.util.ArrayList;
-import java.util.List;
 import edu.java.bot.command.Command;
 import edu.java.bot.service.impl.MessageProcessorServiceImpl;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,13 +19,11 @@ import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 public class MessageProcessorServiceTest {
-
     @Mock
     private Update update;
     @InjectMocks
     private MessageProcessorServiceImpl messageProcessorService;
 
-    private final Long chatId = 123L;
     private final List<Command> commandList = new ArrayList<>();
 
     @BeforeEach
@@ -41,6 +36,7 @@ public class MessageProcessorServiceTest {
     void testWithCommand() {
         Command command1 = mock(Command.class);
         given(command1.supports(update)).willReturn(true);
+        Long chatId = 123L;
         SendMessage givenSendMessage = new SendMessage(chatId, "/start - Start the bot and get welcome message");
         given(command1.handle(update)).willReturn(givenSendMessage);
 

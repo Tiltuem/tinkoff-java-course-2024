@@ -28,5 +28,4 @@ public class LinkValidatorTest {
         assertThat(LinkValidator.siteIsSupported(secondLink)).isTrue();
     }
 
-
 }
