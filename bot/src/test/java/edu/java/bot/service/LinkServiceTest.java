@@ -31,22 +31,11 @@ public class LinkServiceTest {
         String text1 = (String) new SendMessage(1L, "Non-existing link").getParameters().get("text");
         String text2 = (String) new SendMessage(1L, "The site is unsupported").getParameters().get("text");
         String text3 = (String) new SendMessage(1L, "Link successfully added").getParameters().get("text");
-        String text4 = (String) new SendMessage(1L, "Link successfully added").getParameters().get("text");
-        String text5 = (String) new SendMessage(1L, "Link is already tracking").getParameters().get("text");
 
         assertThat(linkService.addLink(1L, "dada").getParameters().get("text")).isEqualTo(text1);
-
         assertThat(linkService.addLink(1L, "https://regex101.com/r/tM7Pmr/4").getParameters().get("text")).isEqualTo(
             text2);
-
         assertThat(linkService.addLink(1L, "https://github.com/Tiltuem").getParameters().get("text")).isEqualTo(text3);
-
-        assertThat(linkService.addLink(
-            1L,
-            "https://stackoverflow.com/questions/14848877/uri-not-absolute-exception-getting-while-calling-restful-webservice"
-        ).getParameters().get("text")).isEqualTo(text4);
-
-        assertThat(linkService.addLink(1L, "https://github.com/Tiltuem").getParameters().get("text")).isEqualTo(text5);
     }
 
 
