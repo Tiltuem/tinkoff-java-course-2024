@@ -1,6 +1,7 @@
 package edu.java.bot.command.impl;
 
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.command.Command;
 import edu.java.bot.service.LinkService;
@@ -27,9 +28,12 @@ public class UntrackCommand implements Command {
         String[] parts = update.message().text().split(" ");
 
         if (parts.length != 2) {
-            return new SendMessage(update.message().chat().id(), "Wrong command. Use /track <link> ");
+            return new SendMessage(
+                update.message().chat().id(),
+                "Wrong command.\nUse /untrack <link>, for example:```command /untrack https://github.com/...```"
+            ).parseMode(
+                ParseMode.Markdown);
         }
-
 
         return linkService.removeLink(update.message().chat().id(), parts[1]);
     }

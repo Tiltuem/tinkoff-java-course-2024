@@ -1,6 +1,5 @@
 package edu.java.bot.service;
 
-import com.pengrad.telegrambot.request.SendMessage;
 
 import edu.java.bot.repository.LinkStorage;
 import edu.java.bot.service.impl.LinkServiceImpl;
@@ -20,36 +19,29 @@ public class LinkServiceTest {
     @Test
     @DisplayName("testGetAllLinks")
     public void testGetAllLinks() {
-        String text = (String) new SendMessage(1L, "No tracked links").getParameters().get("text");
-
-        assertThat(linkService.getAllLink(1L).getParameters().get("text")).isEqualTo(text);
+        assertThat(linkService.getAllLink(1L).getParameters().get("text")).isEqualTo(
+            "No tracked links. Use /track to add a link");
     }
 
     @Test
     @DisplayName("testAddLink")
     void testAddLink() {
-        String text1 = (String) new SendMessage(1L, "Non-existing link").getParameters().get("text");
-        String text2 = (String) new SendMessage(1L, "The site is unsupported").getParameters().get("text");
-        String text3 = (String) new SendMessage(1L, "Link successfully added").getParameters().get("text");
-
-        assertThat(linkService.addLink(1L, "dada").getParameters().get("text")).isEqualTo(text1);
+        assertThat(linkService.addLink(1L, "dada").getParameters().get("text")).isEqualTo(
+            "Sorry, this link does not exist, please try again.");
         assertThat(linkService.addLink(1L, "https://regex101.com/r/tM7Pmr/4").getParameters().get("text")).isEqualTo(
-            text2);
-        assertThat(linkService.addLink(1L, "https://github.com/Tiltuem").getParameters().get("text")).isEqualTo(text3);
+            "The site is unsupported.\n\nList of supported sites: \n");
+        assertThat(linkService.addLink(1L, "https://github.com/Tiltuem").getParameters().get("text")).isEqualTo(
+            "<b><i>Link successfully added!</i></b>");
     }
-
 
     @Test
     @DisplayName("testRemoveLink")
     void testRemoveLink() {
         linkService.addLink(1L, "https://github.com/Tiltuem");
 
-        String text1 = (String) new SendMessage(1L, "Link successfully deleted").getParameters().get("text");
-        String text2 = (String) new SendMessage(1L, "Link is not tracking").getParameters().get("text");
-
-
-        assertThat(linkService.removeLink(1L, "https://github.com/Tiltuem").getParameters().get("text")).isEqualTo(text1);
         assertThat(linkService.removeLink(1L, "https://github.com/Tiltuem").getParameters().get("text")).isEqualTo(
-            text2);
+            "<b><i>Link successfully deleted!</i></b>");
+        assertThat(linkService.removeLink(1L, "https://github.com/Tiltuem").getParameters().get("text")).isEqualTo(
+            "Link is not tracking.");
     }
 }
