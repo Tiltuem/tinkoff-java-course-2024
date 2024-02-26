@@ -15,8 +15,7 @@ public abstract class AbstractClient<T> {
     }
 
     public Mono<T> fetch(String... objects) {
-        String path = startPath + "/%s".repeat(objects.length);
-        path = String.format(path, objects);
-        return webClient.get().uri(path).retrieve().bodyToMono(response);
+        return webClient.get().uri(String.format(startPath + "/%s".repeat(objects.length), objects)).retrieve()
+            .bodyToMono(response);
     }
 }
