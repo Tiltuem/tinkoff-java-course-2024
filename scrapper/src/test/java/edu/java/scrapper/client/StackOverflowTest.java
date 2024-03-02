@@ -3,7 +3,8 @@ package edu.java.scrapper.client;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.client.StackOverflowClient;
-import edu.java.model.StackOverflowResponse;
+import edu.java.client.impl.StackOverflowClientImpl;
+import edu.java.model.StackOverflowQuestionResponse;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -20,7 +21,7 @@ public class StackOverflowTest {
     @Test
     @DisplayName("testFetchRepo")
     public void testFetchRepo(WireMockRuntimeInfo wmRuntimeInfo) {
-        StackOverflowClient stackOverflowClient = new StackOverflowClient(wmRuntimeInfo.getHttpBaseUrl());
+        StackOverflowClient stackOverflowClient = new StackOverflowClientImpl(wmRuntimeInfo.getHttpBaseUrl());
         stubFor(get("/questions/1").willReturn(ok().withHeader("Content-Type", "application/json").withBody("""
             {
                "items": [
@@ -44,7 +45,7 @@ public class StackOverflowTest {
              }
             """)));
 
-        StackOverflowResponse response = stackOverflowClient.fetch("1").block();
+        StackOverflowQuestionResponse response = stackOverflowClient.fetchQuestion(1L);
         OffsetDateTime result = OffsetDateTime.ofInstant(Instant.ofEpochSecond(1676925493), ZoneOffset.UTC);
 
         assertThat(response).isNotNull();

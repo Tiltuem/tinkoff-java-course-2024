@@ -3,7 +3,8 @@ package edu.java.scrapper.client;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.client.GitHubClient;
-import edu.java.model.GitHubResponse;
+import edu.java.client.impl.GitHubClientImpl;
+import edu.java.model.GitHubRepositoryResponse;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +19,7 @@ public class GitHubClientTest {
     @Test
     @DisplayName("testFetchRepo")
     public void testFetchRepo(WireMockRuntimeInfo wmRuntimeInfo) {
-        GitHubClient gitHubClient = new GitHubClient(wmRuntimeInfo.getHttpBaseUrl());
+        GitHubClient gitHubClient = new GitHubClientImpl(wmRuntimeInfo.getHttpBaseUrl());
         stubFor(get("/repos/my/test").willReturn(ok().withHeader("Content-Type", "application/json").withBody("""
             {
               "id": 123,
@@ -28,7 +29,7 @@ public class GitHubClientTest {
             }
             """)));
 
-        GitHubResponse response = gitHubClient.fetch("my", "test").block();
+        GitHubRepositoryResponse response = gitHubClient.fetchRepo("my", "test");
         OffsetDateTime result = OffsetDateTime.of(2024, 2, 25, 0, 0, 0, 0, ZoneOffset.UTC);
         assertThat(response).isNotNull();
         assertThat(response.fullName()).isEqualTo("my/test");
