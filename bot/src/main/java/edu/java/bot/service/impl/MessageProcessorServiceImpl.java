@@ -4,14 +4,15 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.command.Command;
 import edu.java.bot.command.impl.StartCommand;
+import edu.java.bot.exception.UserIsNotRegisteredException;
 import edu.java.bot.service.ChatService;
 import edu.java.bot.service.MessageProcessorService;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class MessageProcessorServiceImpl implements MessageProcessorService {
     private final List<Command> commandList;
@@ -32,17 +33,9 @@ public class MessageProcessorServiceImpl implements MessageProcessorService {
             }
 
             return new SendMessage(update.message().chat().id(), "Wrong command. Use /help to view a list of commands");
-        } else if (Objects.nonNull(update.message())) {
-            return new SendMessage(
-                update.message().chat().id(),
-                "To be able to use the bot, you need to register. Use /start to do this"
-            );
         }
 
-        return new SendMessage(
-            1L,
-            "To be able to use the bot, you need to register"
-        );
+        throw new UserIsNotRegisteredException("To be able to use the bot, you need to register");
     }
 
     private boolean isRegistered(Update update) {

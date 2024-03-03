@@ -2,6 +2,8 @@ package edu.java.bot.service.impl;
 
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.exception.LinkAlreadyTrackedException;
+import edu.java.bot.exception.LinkIsNotTrackedException;
 import edu.java.bot.repository.LinkRepository;
 import edu.java.bot.service.LinkService;
 import edu.java.bot.util.LinkValidator;
@@ -46,8 +48,7 @@ public class LinkServiceImpl implements LinkService {
         if (repository.save(id, link)) {
             return new SendMessage(id, "<b><i>Link successfully added!</i></b>").parseMode(ParseMode.HTML);
         }
-
-        return new SendMessage(id, "Link is already tracking.");
+        throw new LinkAlreadyTrackedException("Link is already tracking.");
     }
 
     @Override
@@ -55,6 +56,6 @@ public class LinkServiceImpl implements LinkService {
         if (repository.deleteByLink(id, link)) {
             return new SendMessage(id, "<b><i>Link successfully deleted!</i></b>").parseMode(ParseMode.HTML);
         }
-        return new SendMessage(id, "Link is not tracking.");
+        throw new LinkIsNotTrackedException("Link is not tracking.");
     }
 }

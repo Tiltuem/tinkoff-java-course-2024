@@ -8,8 +8,21 @@ spring:
   application:
     name: scrapper
 
+
 server:
   port: 8080
 
 logging:
   config: classpath:log4j2-plain.xml
+
+github:
+  base:
+    url: "https://api.github.com"
+
+stackOverflow:
+  base:
+    url: "https://api.stackexchange.com/2.3"
+
+bot:
+  base:
+    url: http://localhost:8090
