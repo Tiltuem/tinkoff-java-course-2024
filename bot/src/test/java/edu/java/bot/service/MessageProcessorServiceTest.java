@@ -3,7 +3,6 @@ package edu.java.bot.service;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.command.Command;
-import edu.java.bot.exception.UserIsNotRegisteredException;
 import edu.java.bot.repository.ChatStorage;
 import edu.java.bot.service.impl.ChatServiceImpl;
 import edu.java.bot.service.impl.MessageProcessorServiceImpl;
@@ -17,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,8 +37,11 @@ public class MessageProcessorServiceTest {
     @Test
     @DisplayName("testWithCommand")
     void testWithCommand() {
-        assertThatThrownBy(() -> {
-            messageProcessorService.process(update);
-        }).isInstanceOf(UserIsNotRegisteredException.class).hasMessageContaining("To be able to use the bot, you need to register");
+        Command command1 = mock(Command.class);
+        commandList.add(command1);
+        SendMessage result = messageProcessorService.process(update);
+        String text = (String) result.getParameters().get("text");
+
+        assertThat(text).isEqualTo("To be able to use the bot, you need to register");
     }
 }

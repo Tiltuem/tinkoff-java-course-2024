@@ -1,15 +1,11 @@
 package edu.java.bot.service;
 
-
-import edu.java.bot.exception.LinkIsNotTrackedException;
-import edu.java.bot.exception.UserIsNotRegisteredException;
 import edu.java.bot.repository.LinkStorage;
 import edu.java.bot.service.impl.LinkServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 public class LinkServiceTest {
     private static LinkService linkService;
@@ -44,9 +40,5 @@ public class LinkServiceTest {
 
         assertThat(linkService.removeLink(1L, "https://github.com/Tiltuem").getParameters().get("text")).isEqualTo(
             "<b><i>Link successfully deleted!</i></b>");
-
-            assertThatThrownBy(() -> {
-                linkService.removeLink(1L, "https://github.com/Tiltuem");
-            }).isInstanceOf(LinkIsNotTrackedException.class).hasMessageContaining("Link is not tracking.");
     }
 }

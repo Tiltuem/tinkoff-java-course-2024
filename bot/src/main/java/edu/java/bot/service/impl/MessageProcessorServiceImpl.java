@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.command.Command;
 import edu.java.bot.command.impl.StartCommand;
-import edu.java.bot.exception.UserIsNotRegisteredException;
 import edu.java.bot.service.ChatService;
 import edu.java.bot.service.MessageProcessorService;
 import java.util.List;
@@ -33,9 +32,17 @@ public class MessageProcessorServiceImpl implements MessageProcessorService {
             }
 
             return new SendMessage(update.message().chat().id(), "Wrong command. Use /help to view a list of commands");
+        } else if (Objects.nonNull(update.message())) {
+            return new SendMessage(
+                update.message().chat().id(),
+                "To be able to use the bot, you need to register. Use /start to do this"
+            );
         }
 
-        throw new UserIsNotRegisteredException("To be able to use the bot, you need to register");
+        return new SendMessage(
+            1L,
+            "To be able to use the bot, you need to register"
+        );
     }
 
     private boolean isRegistered(Update update) {
