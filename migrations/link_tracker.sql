@@ -7,24 +7,30 @@ CREATE TABLE IF NOT EXISTS users(
 );
 --rollback drop table users;
 
---changeset tony:id3
+--changeset tony:id2
 CREATE TABLE IF NOT EXISTS sites(
     id BIGSERIAL PRIMARY KEY,
     name BIGINT UNIQUE NOT NULL
 );
 --rollback drop table sites;
 
---changeset tony:id2
+--changeset tony:id3
 CREATE TABLE IF NOT EXISTS links(
     id BIGSERIAL PRIMARY KEY,
-    url VARCHAR(255) NOT NULL,
+    url VARCHAR(255) UNIQUE NOT NULL,
     last_update TIMESTAMP,
     site_id BIGINT NOT NULL,
-    user_id BIGINT NOT NULL,
-    FOREIGN KEY("site_id") REFERENCES "sites"("id"),
-    FOREIGN KEY("user_id") REFERENCES "users"("id")
+    FOREIGN KEY("site_id") REFERENCES "sites"("id")
 );
 --rollback drop table links;
+
+--changeset tony:id4
+CREATE TABLE IF NOT EXISTS user_links(
+    user_id BIGINT REFERENCES users(id),
+    link_id BIGINT REFERENCES links(id),
+    PRIMARY KEY (user_id, link_id)
+);
+--rollback drop table user_links;
 
 --changeset tony:for_testing
 INSERT INTO users(chat_id)

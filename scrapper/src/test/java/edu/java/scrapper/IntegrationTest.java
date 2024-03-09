@@ -26,6 +26,7 @@ public class IntegrationTest extends IntegrationEnvironment {
         resultSetList.add(metaData.getTables(null, null, "users", null));
         resultSetList.add(metaData.getTables(null, null, "links", null));
         resultSetList.add(metaData.getTables(null, null, "sites", null));
+        resultSetList.add(metaData.getTables(null, null, "user_links", null));
 
         for (ResultSet resultSet : resultSetList) {
             assertThat(resultSet.next()).isTrue();
