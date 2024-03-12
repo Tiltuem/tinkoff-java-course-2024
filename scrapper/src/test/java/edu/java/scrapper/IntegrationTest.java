@@ -1,33 +1,47 @@
 package edu.java.scrapper;
 
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.JdbcDatabaseContainer;
-import org.testcontainers.containers.PostgreSQLContainer;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
-public abstract class IntegrationTest {
-    public static PostgreSQLContainer<?> POSTGRES;
+public class IntegrationTest extends IntegrationEnvironment {
+    @Test
+    @DisplayName("tableExistsTest")
+    void tableExistsTest() throws SQLException {
+        Connection connection =
+            DriverManager.getConnection(POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());
 
-    static {
-        POSTGRES = new PostgreSQLContainer<>("postgres:15")
-            .withDatabaseName("scrapper")
-            .withUsername("postgres")
-            .withPassword("postgres");
-        POSTGRES.start();
+        DatabaseMetaData metaData = connection.getMetaData();
+        List<ResultSet> resultSetList = new ArrayList<>();
+        resultSetList.add(metaData.getTables(null, null, "users", null));
+        resultSetList.add(metaData.getTables(null, null, "links", null));
+        resultSetList.add(metaData.getTables(null, null, "sites", null));
+        resultSetList.add(metaData.getTables(null, null, "user_links", null));
 
-        runMigrations(POSTGRES);
+        for (ResultSet resultSet : resultSetList) {
+            assertThat(resultSet.next()).isTrue();
+        }
     }
 
-    private static void runMigrations(JdbcDatabaseContainer<?> c) {
-        // ...
-    }
+    @Test
+    @DisplayName("testExistingData")
+    void testExistingData() throws SQLException {
+        Connection connection =
+            DriverManager.getConnection(POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());
+        Statement statement = connection.createStatement();
 
-    @DynamicPropertySource
-    static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRES::getUsername);
-        registry.add("spring.datasource.password", POSTGRES::getPassword);
+        ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) AS count_users FROM users");
+        resultSet.next();
+        assertThat(resultSet.getInt("count_users")).isEqualTo(3);
     }
 }
