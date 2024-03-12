@@ -11,8 +11,8 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
 
     @Override
-    public boolean register(Long id) {
-        return chatRepository.save(id);
+    public void register(Long id) {
+        chatRepository.save(id);
     }
 
     @Override

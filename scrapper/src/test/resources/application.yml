@@ -7,11 +7,6 @@ app:
 spring:
   application:
     name: scrapper
-  datasource:
-    url: jdbc:postgresql://localhost:5432/scrapper
-    username: postgres
-    password: postgres
-
 
 
 server:
@@ -30,4 +25,4 @@ stackOverflow:
 
 bot:
   base:
-    url: http://localhost:8090
+    url: http://localhost:8098

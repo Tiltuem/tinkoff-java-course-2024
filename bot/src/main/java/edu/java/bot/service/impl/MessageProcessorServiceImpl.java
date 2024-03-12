@@ -9,9 +9,9 @@ import edu.java.bot.service.MessageProcessorService;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class MessageProcessorServiceImpl implements MessageProcessorService {
     private final List<Command> commandList;

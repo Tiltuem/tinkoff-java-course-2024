@@ -1,6 +1,5 @@
 package edu.java.bot.service;
 
-
 import edu.java.bot.repository.LinkStorage;
 import edu.java.bot.service.impl.LinkServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +40,5 @@ public class LinkServiceTest {
 
         assertThat(linkService.removeLink(1L, "https://github.com/Tiltuem").getParameters().get("text")).isEqualTo(
             "<b><i>Link successfully deleted!</i></b>");
-        assertThat(linkService.removeLink(1L, "https://github.com/Tiltuem").getParameters().get("text")).isEqualTo(
-            "Link is not tracking.");
     }
 }

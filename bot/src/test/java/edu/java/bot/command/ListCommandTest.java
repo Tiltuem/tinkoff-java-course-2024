@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class ListCommandTest {
+public class                     ListCommandTest {
     @InjectMocks
     private LinkServiceImpl linkService;
 

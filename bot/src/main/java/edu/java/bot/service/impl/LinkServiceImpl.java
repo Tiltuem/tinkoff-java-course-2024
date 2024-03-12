@@ -47,7 +47,7 @@ public class LinkServiceImpl implements LinkService {
             return new SendMessage(id, "<b><i>Link successfully added!</i></b>").parseMode(ParseMode.HTML);
         }
 
-        return new SendMessage(id, "Link is already tracking.");
+        return new SendMessage(id, "Link is already tracking.").parseMode(ParseMode.HTML);
     }
 
     @Override
@@ -55,6 +55,6 @@ public class LinkServiceImpl implements LinkService {
         if (repository.deleteByLink(id, link)) {
             return new SendMessage(id, "<b><i>Link successfully deleted!</i></b>").parseMode(ParseMode.HTML);
         }
-        return new SendMessage(id, "Link is not tracking.");
+        return new SendMessage(id, "Link is not tracking.").parseMode(ParseMode.HTML);
     }
 }

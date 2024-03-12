@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class StartCommandTest {
+public class  StartCommandTest {
     @Mock
     private ChatService chatService;
     @Test
