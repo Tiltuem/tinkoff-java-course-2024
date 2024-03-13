@@ -11,7 +11,8 @@ spring:
     url: jdbc:postgresql://localhost:5432/scrapper
     username: postgres
     password: postgres
-
+  liquibase:
+    enabled: false
 
 
 server:
