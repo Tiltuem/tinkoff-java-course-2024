@@ -37,6 +37,7 @@ public class JdbcLinkRepository {
     @Autowired
     private JdbcClient jdbcClient;
 
+    @Transactional
     public void saveUserLink(Long chatId, URI url, Long siteId) {
         Long userId = jdbcUserRepository.findByChatId(chatId)
             .orElseThrow(() -> new ChatIdNotFoundException(CHAT_ID_NOT_FOUND.formatted(chatId))).getId();
@@ -54,6 +55,7 @@ public class JdbcLinkRepository {
         jdbcClient.sql(ADD_USER_LINK).param(userId).param(linkId).update();
     }
 
+    @Transactional
     public LinkResponse removeUserLink(Long chatId, URI url) {
         Long linkId = findByUrl(url)
             .orElseThrow(() -> new LinkIsNotTrackedException(LINK_URL_NOT_FOUND.formatted(url))).getId();
