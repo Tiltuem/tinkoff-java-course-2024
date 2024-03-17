@@ -4,10 +4,11 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.client.StackOverflowClient;
 import edu.java.client.impl.StackOverflowClientImpl;
-import edu.java.model.StackOverflowQuestionResponse;
+import edu.java.model.response.StackOverflowQuestionItemResponse;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -45,11 +46,11 @@ public class StackOverflowTest {
              }
             """)));
 
-        StackOverflowQuestionResponse response = stackOverflowClient.fetchQuestion(1L);
+        Optional<StackOverflowQuestionItemResponse> response = stackOverflowClient.fetchQuestion(1L);
         OffsetDateTime result = OffsetDateTime.ofInstant(Instant.ofEpochSecond(1676925493), ZoneOffset.UTC);
 
         assertThat(response).isNotNull();
-        assertThat(response.items().get(0).title()).isEqualTo("Repository Name as a GitHub Action environment variable?");
-        assertThat(response.items().get(0).lastActivityDay()).isEqualTo(result);
+        assertThat(response.get().title()).isEqualTo("Repository Name as a GitHub Action environment variable?");
+        assertThat(response.get().lastActivityDay()).isEqualTo(result);
     }
 }

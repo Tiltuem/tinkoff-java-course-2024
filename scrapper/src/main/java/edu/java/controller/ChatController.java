@@ -1,6 +1,7 @@
 package edu.java.controller;
 
-import org.springframework.http.ResponseEntity;
+import edu.java.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,16 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/tg-chat")
+@RequiredArgsConstructor
 public class ChatController {
-    @PostMapping("/{id}")
-    public ResponseEntity<Void> registerChat(@PathVariable Long id) {
-        //TODO дописать
-        return ResponseEntity.ok().build();
+    private final UserService userService;
+
+    @PostMapping("/add/{chatId}")
+    public void registerChat(@PathVariable Long chatId) {
+        userService.addUser(chatId);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteChat(@PathVariable Long id) {
-        //TODO дописать
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/delete/{id}")
+    public void deleteChat(@PathVariable Long id) {
+        userService.removeUser(id);
     }
 }

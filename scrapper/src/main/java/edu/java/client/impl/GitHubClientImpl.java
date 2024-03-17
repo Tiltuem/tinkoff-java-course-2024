@@ -1,7 +1,7 @@
 package edu.java.client.impl;
 
 import edu.java.client.GitHubClient;
-import edu.java.model.GitHubRepositoryResponse;
+import edu.java.model.response.GitHubRepositoryResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
 public class GitHubClientImpl implements GitHubClient {

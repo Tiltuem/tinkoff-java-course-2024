@@ -45,6 +45,7 @@ public class MessageProcessorServiceImpl implements MessageProcessorService {
         );
     }
 
+
     private boolean isRegistered(Update update) {
         StartCommand startCommand = new StartCommand(chatService);
         return Objects.nonNull(update.message())

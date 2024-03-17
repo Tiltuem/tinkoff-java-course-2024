@@ -1,4 +1,4 @@
-package edu.java.model;
+package edu.java.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

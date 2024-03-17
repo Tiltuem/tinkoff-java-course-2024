@@ -11,6 +11,8 @@ public interface Bot extends AutoCloseable, UpdatesListener {
 
     int process(List<Update> updates);
 
+    void sendMessage(Long chatId, String text);
+
     void start();
 
     void close();

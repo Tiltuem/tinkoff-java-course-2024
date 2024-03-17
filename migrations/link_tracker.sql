@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users(
 --changeset tony:id2
 CREATE TABLE IF NOT EXISTS sites(
     id   BIGSERIAL PRIMARY KEY,
-    name BIGINT UNIQUE NOT NULL
+    name VARCHAR(255) UNIQUE NOT NULL
 );
 --rollback drop table sites;
 
@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS links(
     url         VARCHAR(255) UNIQUE NOT NULL,
     last_update TIMESTAMP,
     site_id     BIGINT              NOT NULL,
+    last_check  TIMESTAMP,
     FOREIGN KEY ("site_id") REFERENCES "sites" ("id")
 );
 --rollback drop table links;
