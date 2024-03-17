@@ -1,7 +1,10 @@
 package edu.java.util.updateChecker;
 
 import edu.java.client.GitHubClient;
+import edu.java.model.GithubLinkInfo;
 import edu.java.model.Link;
+import edu.java.model.LinkInfo;
+import edu.java.model.response.GitHubPullRequestsResponse;
 import edu.java.model.response.GitHubRepositoryResponse;
 import edu.java.service.LinkUpdater;
 import java.util.Objects;
@@ -27,7 +30,15 @@ public class GitHubUpdateChecker implements UpdateChecker {
         String ownerName = segments[1];
         String repositoryName = segments[2];
         GitHubRepositoryResponse response = gitHubClient.fetchRepo(ownerName, repositoryName);
-        return linkUpdater.update(link, Objects.requireNonNull(response).updatedAt().toLocalDateTime());
+
+        GitHubPullRequestsResponse pullRequestsResponse = gitHubClient.fetchPullRequests(ownerName, repositoryName);
+
+        LinkInfo linkInfo = new GithubLinkInfo(
+            link,
+            Optional.ofNullable(response).map(GitHubRepositoryResponse::updatedAt),
+            Objects.requireNonNull(pullRequestsResponse).pullRequestsCount()
+        );
+        return linkUpdater.update(linkInfo);
     }
 
     @Override

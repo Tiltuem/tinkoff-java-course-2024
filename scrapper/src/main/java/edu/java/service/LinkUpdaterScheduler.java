@@ -23,6 +23,7 @@ public class LinkUpdaterScheduler {
     private final UserService userService;
     private final BotClient botClient;
     private final List<UpdateChecker> updateCheckerList;
+    private final LinkUpdater linkUpdater;
     @Value("#{@schedulerCheckInterval.toMillis()}")
     private Duration checkInterval;
 

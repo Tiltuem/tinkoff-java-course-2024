@@ -2,6 +2,7 @@ package edu.java.util.updateChecker;
 
 import edu.java.client.StackOverflowClient;
 import edu.java.model.Link;
+import edu.java.model.StackoverflowLinkInfo;
 import edu.java.model.response.StackOverflowQuestionItemResponse;
 import edu.java.service.LinkUpdater;
 import java.util.Arrays;
@@ -42,7 +43,9 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
             return Optional.empty();
         }
 
-        return linkUpdater.update(link, response.get().lastActivityDay().toLocalDateTime());
+        return linkUpdater.update(new StackoverflowLinkInfo(link, Optional.of(response.get().lastActivityDay()),
+            response.get().answersCount()
+        ));
     }
 
     @Override

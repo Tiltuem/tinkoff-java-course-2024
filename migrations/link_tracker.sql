@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users(
 --changeset tony:id2
 CREATE TABLE IF NOT EXISTS sites(
     id   BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) UNIQUE NOT NULL
+    site_name VARCHAR(255) UNIQUE NOT NULL
 );
 --rollback drop table sites;
 
@@ -19,9 +19,9 @@ CREATE TABLE IF NOT EXISTS links(
     id          BIGSERIAL PRIMARY KEY,
     url         VARCHAR(255) UNIQUE NOT NULL,
     last_update TIMESTAMP,
-    site_id     BIGINT              NOT NULL,
     last_check  TIMESTAMP,
-    FOREIGN KEY ("site_id") REFERENCES "sites" ("id")
+    site_id     BIGINT              NOT NULL,
+    CONSTRAINT FK FOREIGN KEY (site_id) REFERENCES sites(id)
 );
 --rollback drop table links;
 
@@ -32,6 +32,21 @@ CREATE TABLE IF NOT EXISTS user_links(
     PRIMARY KEY (user_id, link_id)
 );
 --rollback drop table user_links;
+
+--changeset tony:id5
+CREATE TABLE IF NOT EXISTS github_links(
+    link_id BIGSERIAL PRIMARY KEY REFERENCES links(id) ON DELETE CASCADE,
+    last_push TIMESTAMP,
+    pull_requests_count INTEGER NOT NULL DEFAULT 0
+);
+--rollback drop table github_links;
+
+--changeset tony:id6
+CREATE TABLE IF NOT EXISTS stackoverflow_links(
+    link_id BIGSERIAL PRIMARY KEY REFERENCES links(id) ON DELETE CASCADE,
+    answers_count INTEGER NOT NULL DEFAULT 0
+);
+--rollback drop table stackoverflow_links;
 
 --changeset tony:for_testing
 INSERT INTO users(chat_id)
