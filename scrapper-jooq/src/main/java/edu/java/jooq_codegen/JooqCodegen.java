@@ -36,7 +36,7 @@ public class JooqCodegen {
             .withPojos(true);
 
         Target target = new Target()
-            .withPackageName("repository.jooq")
+            .withPackageName("edu.java.repository.jooq")
             .withDirectory("scrapper/src/main/java");
 
         Configuration configuration = new Configuration()

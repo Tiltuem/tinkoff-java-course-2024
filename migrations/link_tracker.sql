@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS sites(
 CREATE TABLE IF NOT EXISTS links(
     id          BIGSERIAL PRIMARY KEY,
     url         VARCHAR(255) UNIQUE NOT NULL,
-    last_update TIMESTAMP,
-    last_check  TIMESTAMP,
+    last_update TIMESTAMP WITH TIME ZONE,
+    last_check  TIMESTAMP WITH TIME ZONE,
     site_id     BIGINT              NOT NULL,
     CONSTRAINT FK FOREIGN KEY (site_id) REFERENCES sites(id)
 );
@@ -36,7 +36,6 @@ CREATE TABLE IF NOT EXISTS user_links(
 --changeset tony:id5
 CREATE TABLE IF NOT EXISTS github_links(
     link_id BIGSERIAL PRIMARY KEY REFERENCES links(id) ON DELETE CASCADE,
-    last_push TIMESTAMP,
     pull_requests_count INTEGER NOT NULL DEFAULT 0
 );
 --rollback drop table github_links;
