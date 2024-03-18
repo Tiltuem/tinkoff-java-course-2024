@@ -19,6 +19,7 @@ public class JooqLinkService implements LinkService {
     private final JooqLinkRepository linkRepository;
     private final JooqUserRepository userRepository;
     private final JooqSiteRepository siteRepository;
+
     @Override
     public LinkResponse addUserLink(Long chatId, URI url) {
         LinkInfo linkInfo;

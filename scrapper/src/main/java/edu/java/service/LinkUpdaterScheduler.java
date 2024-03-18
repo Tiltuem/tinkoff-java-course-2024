@@ -2,6 +2,8 @@ package edu.java.service;
 
 import edu.java.bot.BotClient;
 import edu.java.model.Link;
+import edu.java.service.impl.JdbcLinkService;
+import edu.java.service.impl.JdbcUserService;
 import edu.java.util.updateChecker.UpdateChecker;
 import java.time.Duration;
 import java.util.List;
@@ -19,8 +21,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class LinkUpdaterScheduler {
     static int counter = 1;
-    private final LinkService linkService;
-    private final UserService userService;
+    private final JdbcLinkService linkService;
+    private final JdbcUserService userService;
     private final BotClient botClient;
     private final List<UpdateChecker> updateCheckerList;
     private final LinkUpdater linkUpdater;

@@ -14,10 +14,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class JdbcSiteRepository {
-    private static final String SAVE = "INSERT INTO sites(name) VALUES (?)";
+    private static final String SAVE = "INSERT INTO sites(site_name) VALUES (?)";
     private static final String REMOVE = "DELETE FROM sites WHERE id = ?";
     private static final String FIND_ALL = "SELECT * FROM sites";
-    private static final String FIND_BY_NAME = "SELECT * FROM sites WHERE name = ?";
+    private static final String FIND_BY_NAME = "SELECT * FROM sites WHERE site_name = ?";
     private static final BeanPropertyRowMapper<Site> MAPPER = new BeanPropertyRowMapper<>(Site.class);
     @Autowired
     private JdbcClient jdbcClient;

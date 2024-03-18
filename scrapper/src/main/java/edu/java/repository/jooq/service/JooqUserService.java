@@ -30,9 +30,9 @@ public class JooqUserService implements UserService {
 
     @Override
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new UserIsNotRegisteredException("User with the id = %d not found.".formatted(id)));
+        return userRepository.findById(id)
+            .orElseThrow(() -> new UserIsNotRegisteredException("User with the id = %d not found.".formatted(id)));
     }
-
 
     @Override
     public List<Long> getUsersTrackLink(Long linkId) {

@@ -31,6 +31,8 @@ import static edu.java.repository.jooq.Tables.USER_LINKS;
 @RequiredArgsConstructor
 public class JooqLinkRepository {
     private final DSLContext dslContext;
+    private static final String CHAT_ID_NOT_FOUND = "ChatId = %d not found.";
+    private static final String LINK_NOT_FOUND = "Link with URL = %s not found";
 
     @Transactional
     public void saveUserLink(Long chatId, LinkInfo linkInfo) {
@@ -39,14 +41,15 @@ public class JooqLinkRepository {
         switch (linkInfo.getLink().getUrl().getHost().toLowerCase()) {
             case "github" -> addGithubLinkRecord(linksRecord.getId(), ((GithubLinkInfo) linkInfo));
             case "stackoverflow" -> addStackoverflowLinkRecord(linksRecord.getId(), ((StackoverflowLinkInfo) linkInfo));
-            default -> throw new IllegalArgumentException("Invalid link type: " + linkInfo.getLink().getUrl().getHost());
+            default ->
+                throw new IllegalArgumentException("Invalid link type: " + linkInfo.getLink().getUrl().getHost());
         }
         Long userId = dslContext
             .selectFrom(USERS)
             .where(USERS.CHAT_ID.eq(chatId))
             .fetchOptional()
             .map(rec -> new User(rec.getId(), rec.getChatId()))
-            .orElseThrow(() -> new ChatIdNotFoundException("ChatId = %d not found.".formatted(chatId))).getId();
+            .orElseThrow(() -> new ChatIdNotFoundException(CHAT_ID_NOT_FOUND.formatted(chatId))).getId();
         addUserLink(userId, linksRecord.getId());
     }
 
@@ -55,7 +58,7 @@ public class JooqLinkRepository {
         UsersRecord usersRecord = dslContext.selectFrom(USERS).where(USERS.CHAT_ID.eq(chatId)).fetchOne();
 
         if (usersRecord == null) {
-            throw new ChatIdNotFoundException("ChatId = %d not found.".formatted(chatId));
+            throw new ChatIdNotFoundException(CHAT_ID_NOT_FOUND.formatted(chatId));
         }
         Long userId = usersRecord.getId();
 
@@ -64,7 +67,7 @@ public class JooqLinkRepository {
             .fetchOne();
 
         if (linksRecord == null) {
-            throw new LinkIsNotTrackedException("Link with URL = %s not found".formatted(url));
+            throw new LinkIsNotTrackedException(LINK_NOT_FOUND.formatted(url));
         }
         Long linkId = linksRecord.getId();
 
@@ -74,7 +77,7 @@ public class JooqLinkRepository {
             .execute();
 
         if (rowsAffected == 0) {
-            throw new LinkIsNotTrackedException("Link with URL = %s not found".formatted(url));
+            throw new LinkIsNotTrackedException(LINK_NOT_FOUND.formatted(url));
         }
 
         clearDBFromUntrackedLink(linkId);

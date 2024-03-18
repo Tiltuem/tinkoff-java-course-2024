@@ -25,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class JdbcLinkRepository {
     private static final String ADD_LINK = "INSERT INTO links(url, last_update, site_id) VALUES (?, ?, ?)";
     private static final String ADD_USER_LINK = "INSERT INTO user_links(user_id, link_id) VALUES (?, ?)";
-    private static final String ADD_SPECIFIC_LINK = "INSERT INTO %s_links(link_id) WHERE link_id = ?";
-    private static final String RE3MOVE_SPECIFIC_LINK = "DELETE FROM %s_links(link_id) VALUES (?)";
+    private static final String ADD_SPECIFIC_LINK = "INSERT INTO %s_links(link_id) VALUES (?)";
+    private static final String RE3MOVE_SPECIFIC_LINK = "DELETE FROM %s_links WHERE link_id = ?";
     private static final String REMOVE_LINK = "DELETE FROM links WHERE id = ?";
     private static final String REMOVE_USER_LINK = "DELETE FROM user_links WHERE user_id = ? AND link_id = ?";
     private static final String FIND_ALL_LINKS_BY_USER_ID =
@@ -141,13 +141,13 @@ public class JdbcLinkRepository {
 
     @SuppressWarnings("MagicNumber")
     private void saveLinkToSpecificTable(URI url, Long linkId) {
-        jdbcClient.sql(ADD_SPECIFIC_LINK.formatted(url.getHost().substring(0, url.toString().length() - 4)))
+        jdbcClient.sql(ADD_SPECIFIC_LINK.formatted(url.getHost().substring(0, url.getHost().length() - 4)))
             .param(linkId).update();
     }
 
     @SuppressWarnings("MagicNumber")
     private void removeLinkToSpecificTable(URI url, Long linkId) {
-        jdbcClient.sql(RE3MOVE_SPECIFIC_LINK.formatted(url.getHost().substring(0, url.toString().length() - 4)))
+        jdbcClient.sql(RE3MOVE_SPECIFIC_LINK.formatted(url.getHost().substring(0, url.getHost().length() - 4)))
             .param(linkId).update();
     }
 }
