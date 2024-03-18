@@ -6,7 +6,7 @@ import edu.java.exception.LinkAlreadyTrackedException;
 import edu.java.exception.LinkIsNotTrackedException;
 import edu.java.model.Link;
 import java.net.URI;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -38,18 +38,19 @@ public class JdbcLinkRepository {
     private JdbcClient jdbcClient;
 
     @Transactional
-    public void saveUserLink(Long chatId, URI url, Long siteId) {
+    public void saveUserLink(Long chatId, Link link) {
         Long userId = jdbcUserRepository.findByChatId(chatId)
             .orElseThrow(() -> new ChatIdNotFoundException(CHAT_ID_NOT_FOUND.formatted(chatId))).getId();
-        Optional<Link> link = findByUrl(url);
+        Optional<Link> oldLink = findByUrl(link.getUrl());
 
-        if (link.isEmpty()) {
-            jdbcClient.sql(ADD_LINK).param(url.toString()).param(LocalDateTime.now()).param(siteId).update();
+        if (oldLink.isEmpty()) {
+            jdbcClient.sql(ADD_LINK).param(link.getUrl().toString()).param(OffsetDateTime.now()).param(link.getSiteId())
+                .update();
         }
 
-        Long linkId = findByUrl(url).get().getId();
+        Long linkId = findByUrl(link.getUrl()).get().getId();
         if (isUserLinkExists(userId, linkId)) {
-            throw new LinkAlreadyTrackedException("Link with URL = %s already tracked.".formatted(url));
+            throw new LinkAlreadyTrackedException("Link with URL = %s already tracked.".formatted(link.getUrl()));
         }
 
         jdbcClient.sql(ADD_USER_LINK).param(userId).param(linkId).update();
@@ -88,9 +89,9 @@ public class JdbcLinkRepository {
     }
 
     @Transactional
-    public boolean updateLink(Link link, LocalDateTime updateTime) {
+    public boolean updateLink(Link link, OffsetDateTime updateTime) {
         jdbcClient.sql(UPDATE_LAST_CHECK_LINK).param(link.getId()).update();
-        Optional<LocalDateTime> lastUpdate =
+        Optional<OffsetDateTime> lastUpdate =
             Optional.ofNullable(jdbcClient.sql(FIND_LINK_BY_ID).param(link.getId()).query(MAPPER).single()
                 .getLastUpdate());
 

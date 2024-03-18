@@ -42,7 +42,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
             return Optional.empty();
         }
 
-        return linkUpdater.update(link, response.get().lastActivityDay().toLocalDateTime());
+        return linkUpdater.update(link, response.get().lastActivityDay());
     }
 
     @Override

@@ -27,7 +27,7 @@ public class GitHubUpdateChecker implements UpdateChecker {
         String ownerName = segments[1];
         String repositoryName = segments[2];
         GitHubRepositoryResponse response = gitHubClient.fetchRepo(ownerName, repositoryName);
-        return linkUpdater.update(link, Objects.requireNonNull(response).updatedAt().toLocalDateTime());
+        return linkUpdater.update(link, Objects.requireNonNull(response).updatedAt());
     }
 
     @Override

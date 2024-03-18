@@ -1,7 +1,7 @@
 package edu.java.model;
 
 import java.net.URI;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class Link {
     private Long id;
     private URI url;
-    private LocalDateTime lastUpdate;
+    private OffsetDateTime lastUpdate;
     private Long siteId;
 }

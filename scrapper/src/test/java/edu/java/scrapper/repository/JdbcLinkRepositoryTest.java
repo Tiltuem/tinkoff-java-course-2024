@@ -7,6 +7,7 @@ import edu.java.repository.jdbc.JdbcSiteRepository;
 import edu.java.repository.jdbc.JdbcUserRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,8 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         userRepository.save(CHAT_ID);
         siteRepository.save("github.com");
         Long siteId = siteRepository.findAll().getFirst().getId();
-        linkRepository.saveUserLink(CHAT_ID, URL, siteId);
+        Link link = new Link(null, URL, OffsetDateTime.now(), siteId);
+        linkRepository.saveUserLink(CHAT_ID, link);
         Long userId = userRepository.findByChatId(CHAT_ID).get().getId();
 
         List<Link> allLinks = linkRepository.findAllLinksByUserId(userId);
@@ -49,7 +51,8 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         userRepository.save(CHAT_ID);
         siteRepository.save("github.com");
         Long siteId = siteRepository.findAll().getFirst().getId();
-        linkRepository.saveUserLink(CHAT_ID, URL, siteId);
+        Link link = new Link(null, URL, OffsetDateTime.now(), siteId);
+        linkRepository.saveUserLink(CHAT_ID, link);
         linkRepository.removeUserLink(CHAT_ID, URL);
         Long userId = userRepository.findByChatId(CHAT_ID).get().getId();
 
@@ -68,9 +71,13 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         userRepository.save(CHAT_ID);
         siteRepository.save("github.com");
         Long siteId = siteRepository.findAll().getFirst().getId();
-        linkRepository.saveUserLink(CHAT_ID, firstUrl, siteId);
-        linkRepository.saveUserLink(CHAT_ID, secondUrl, siteId);
-        linkRepository.saveUserLink(CHAT_ID, thirdUrl, siteId);
+        Link link1 = new Link(null, firstUrl, OffsetDateTime.now(), siteId);
+        Link link2 = new Link(null, secondUrl, OffsetDateTime.now(), siteId);
+        Link link3 = new Link(null, thirdUrl, OffsetDateTime.now(), siteId);
+
+        linkRepository.saveUserLink(CHAT_ID, link1);
+        linkRepository.saveUserLink(CHAT_ID, link2);
+        linkRepository.saveUserLink(CHAT_ID, link3);
 
         Long userId = userRepository.findByChatId(CHAT_ID).get().getId();
         List<Link> allLinks = linkRepository.findAllLinksByUserId(userId);
@@ -88,10 +95,11 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         userRepository.save(CHAT_ID);
         siteRepository.save("github.com");
         Long siteId = siteRepository.findAll().getFirst().getId();
-        linkRepository.saveUserLink(CHAT_ID, URL, siteId);
+        Link link = new Link(null, URL, OffsetDateTime.now(), siteId);
+        linkRepository.saveUserLink(CHAT_ID, link);
 
         assertThatThrownBy(() -> {
-            linkRepository.saveUserLink(CHAT_ID, URL, siteId);
+            linkRepository.saveUserLink(CHAT_ID, link);
         }).isInstanceOf(LinkAlreadyTrackedException.class)
             .hasMessageContaining("Link with URL = %s already tracked.".formatted(URL));
     }
