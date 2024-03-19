@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class JooqSireService implements SiteService {
+public class JooqSiteService implements SiteService {
     private final JooqSiteRepository jooqSiteRepository;
 
     @Override
