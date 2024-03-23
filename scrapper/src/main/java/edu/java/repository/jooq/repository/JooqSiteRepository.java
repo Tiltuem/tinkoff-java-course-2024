@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
-import org.jooq.exception.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 import static edu.java.repository.jooq.Tables.SITES;
 
@@ -22,7 +22,7 @@ public class JooqSiteRepository {
                 .insertInto(SITES)
                 .set(SITES.SITE_NAME, name)
                 .execute();
-        } catch (DataAccessException e) {
+        } catch (DuplicateKeyException e) {
             throw new SiteAlreadyExistsException("Site with URL = %s already exists".formatted(name));
         }
     }
