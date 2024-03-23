@@ -1,7 +1,9 @@
 package edu.java.client.impl;
 
 import edu.java.client.StackOverflowClient;
-import edu.java.model.StackOverflowQuestionResponse;
+import edu.java.model.response.StackOverflowQuestionItemResponse;
+import edu.java.model.response.StackOverflowQuestionResponse;
+import java.util.Optional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 public class StackOverflowClientImpl implements StackOverflowClient {
@@ -12,10 +14,11 @@ public class StackOverflowClientImpl implements StackOverflowClient {
     }
 
     @Override
-    public StackOverflowQuestionResponse fetchQuestion(Long id) {
+    public Optional<StackOverflowQuestionItemResponse> fetchQuestion(Long id) {
         return webClient.get()
             .uri("/questions/{id}", id)
             .retrieve()
-            .bodyToMono(StackOverflowQuestionResponse.class).block();
+            .bodyToMono(StackOverflowQuestionResponse.class)
+            .map(resp -> Optional.ofNullable(!resp.items().isEmpty() ? resp.items().getFirst() : null)).block();
     }
 }

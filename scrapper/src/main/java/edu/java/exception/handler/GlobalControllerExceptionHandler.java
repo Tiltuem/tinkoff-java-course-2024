@@ -1,8 +1,11 @@
 package edu.java.exception.handler;
 
 import edu.java.dto.ApiErrorResponse;
+import edu.java.exception.ChatIdNotFoundException;
 import edu.java.exception.LinkAlreadyTrackedException;
 import edu.java.exception.LinkIsNotTrackedException;
+import edu.java.exception.SiteAlreadyExistsException;
+import edu.java.exception.SiteNotFoundException;
 import edu.java.exception.UserAlreadyRegisteredException;
 import edu.java.exception.UserIsNotRegisteredException;
 import java.util.Collections;
@@ -16,6 +19,7 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler(value = {
         LinkAlreadyTrackedException.class,
         UserAlreadyRegisteredException.class,
+        SiteAlreadyExistsException.class
     })
     public ResponseEntity<ApiErrorResponse> handleConflictException(Exception ex) {
         ApiErrorResponse errorResponse = new ApiErrorResponse(
@@ -28,7 +32,11 @@ public class GlobalControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
-    @ExceptionHandler(LinkIsNotTrackedException.class)
+    @ExceptionHandler(value = {
+        LinkIsNotTrackedException.class,
+        ChatIdNotFoundException.class,
+        SiteNotFoundException.class,
+    })
     public ResponseEntity<ApiErrorResponse> handleNotFoundException(Exception ex) {
         ApiErrorResponse errorResponse = new ApiErrorResponse(
             ex.getMessage(),
