@@ -8,7 +8,7 @@ import java.util.List;
 public interface LinkService {
     LinkResponse addUserLink(Long chatId, URI uri);
 
-    LinkResponse removeUserLink(Long chatId, URI url);
+    LinkResponse removeUserLink(Long chatId, URI uri);
 
     List<Link> getAllUserLinks(Long id);
 

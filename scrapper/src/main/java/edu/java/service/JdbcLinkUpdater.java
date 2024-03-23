@@ -1,4 +1,4 @@
-package edu.java.service.impl;
+package edu.java.service;
 
 import edu.java.model.GithubLinkInfo;
 import edu.java.model.LinkInfo;

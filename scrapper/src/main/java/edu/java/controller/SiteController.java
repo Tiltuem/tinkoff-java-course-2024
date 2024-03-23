@@ -1,7 +1,7 @@
 package edu.java.controller;
 
 import edu.java.model.Site;
-import edu.java.service.impl.JdbcSiteService;
+import edu.java.service.jdbc.JdbcSiteService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;

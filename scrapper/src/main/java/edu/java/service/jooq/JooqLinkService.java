@@ -1,4 +1,4 @@
-package edu.java.repository.jooq.service;
+package edu.java.service.jooq;
 
 import edu.java.dto.LinkResponse;
 import edu.java.exception.SiteNotFoundException;
@@ -51,8 +51,8 @@ public class JooqLinkService implements LinkService {
     }
 
     @Override
-    public LinkResponse removeUserLink(Long chatId, URI url) {
-        return linkRepository.removeUserLink(chatId, url);
+    public LinkResponse removeUserLink(Long chatId, URI uri) {
+        return linkRepository.removeUserLink(chatId, uri);
     }
 
     @Override

@@ -2,8 +2,8 @@ package edu.java.service;
 
 import edu.java.bot.BotClient;
 import edu.java.model.Link;
-import edu.java.service.impl.JdbcLinkService;
-import edu.java.service.impl.JdbcUserService;
+import edu.java.service.jdbc.JdbcLinkService;
+import edu.java.service.jdbc.JdbcUserService;
 import edu.java.util.updateChecker.UpdateChecker;
 import java.time.Duration;
 import java.util.List;

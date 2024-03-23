@@ -1,29 +1,29 @@
-package edu.java.repository.jooq.service;
+package edu.java.service.jpa;
 
 import edu.java.model.Site;
-import edu.java.repository.jooq.repository.JooqSiteRepository;
+import edu.java.repository.jpa.JpaSiteRepository;
 import edu.java.service.SiteService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class JooqSiteService implements SiteService {
-    private final JooqSiteRepository jooqSiteRepository;
+public class JpaSiteService implements SiteService {
+    private final JpaSiteRepository repository;
 
     @Override
     public void addSite(String name) {
-        jooqSiteRepository.save(name);
+        repository.save(Site.builder().name(name).build());
     }
 
     @Override
     public void removeSite(Long id) {
-        jooqSiteRepository.remove(id);
+        repository.deleteById(id);
     }
 
     @Override
     public List<Site> getAllSites() {
-        return jooqSiteRepository.findAll();
+        return repository.findAll();
     }
 }

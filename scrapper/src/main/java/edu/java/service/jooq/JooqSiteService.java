@@ -1,7 +1,7 @@
-package edu.java.service.impl;
+package edu.java.service.jooq;
 
 import edu.java.model.Site;
-import edu.java.repository.jdbc.JdbcSiteRepository;
+import edu.java.repository.jooq.repository.JooqSiteRepository;
 import edu.java.service.SiteService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -9,21 +9,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class JdbcSiteService implements SiteService {
-    private final JdbcSiteRepository jdbcSiteRepository;
+public class JooqSiteService implements SiteService {
+    private final JooqSiteRepository jooqSiteRepository;
 
     @Override
     public void addSite(String name) {
-        jdbcSiteRepository.save(name);
+        jooqSiteRepository.save(name);
     }
 
     @Override
     public void removeSite(Long id) {
-        jdbcSiteRepository.remove(id);
+        jooqSiteRepository.remove(id);
     }
 
     @Override
     public List<Site> getAllSites() {
-        return jdbcSiteRepository.findAll();
+        return jooqSiteRepository.findAll();
     }
 }

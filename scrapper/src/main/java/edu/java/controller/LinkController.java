@@ -4,7 +4,7 @@ import edu.java.dto.AddLinkRequest;
 import edu.java.dto.LinkResponse;
 import edu.java.dto.ListLinksResponse;
 import edu.java.dto.RemoveLinkRequest;
-import edu.java.service.impl.JdbcLinkService;
+import edu.java.service.jdbc.JdbcLinkService;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

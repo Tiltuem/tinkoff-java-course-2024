@@ -1,4 +1,4 @@
-package edu.java.service.impl;
+package edu.java.service.jdbc;
 
 import edu.java.dto.LinkResponse;
 import edu.java.exception.SiteNotFoundException;
@@ -20,8 +20,8 @@ public class JdbcLinkService implements LinkService {
     private final List<UpdateChecker> updateCheckerList;
 
     @Override
-    public LinkResponse addUserLink(Long chatId, URI url) {
-        Link link = new Link(null, url, null, null);
+    public LinkResponse addUserLink(Long chatId, URI uri) {
+        Link link = new Link(null, uri, null, null);
         for (UpdateChecker checker : updateCheckerList) {
             if (checker.isAppropriateLink(link)) {
                 try {
@@ -32,13 +32,13 @@ public class JdbcLinkService implements LinkService {
             }
         }
 
-        repository.saveUserLink(chatId, url, parseSite(url));
-        return new LinkResponse(repository.findByUrl(url).get().getId(), url);
+        repository.saveUserLink(chatId, uri, parseSite(uri));
+        return new LinkResponse(repository.findByUrl(uri).get().getId(), uri);
     }
 
     @Override
-    public LinkResponse removeUserLink(Long chatId, URI url) {
-        return repository.removeUserLink(chatId, url);
+    public LinkResponse removeUserLink(Long chatId, URI uri) {
+        return repository.removeUserLink(chatId, uri);
     }
 
     @Override
