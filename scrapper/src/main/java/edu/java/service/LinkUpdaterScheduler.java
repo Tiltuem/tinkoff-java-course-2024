@@ -44,9 +44,13 @@ public class LinkUpdaterScheduler {
     private void updateLink(Link link) {
         for (UpdateChecker checker : updateCheckerList) {
             if (checker.isAppropriateLink(link)) {
-                Optional<String> result = checker.checkUpdates(link);
-                result.ifPresent(updateMessage -> sendUpdatesToUsers(link, updateMessage));
-                break;
+                try {
+                    Optional<String> result = checker.checkUpdates(link);
+                    result.ifPresent(updateMessage -> sendUpdatesToUsers(link, updateMessage));
+                    break;
+                } catch (RuntimeException e) {
+                    throw new RuntimeException("Incorrect link, please try again");
+                }
             }
         }
     }

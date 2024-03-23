@@ -26,7 +26,7 @@ public class JdbcLinkUpdater implements LinkUpdater {
             response = "Link updated";
 
             if (linkInfo instanceof GithubLinkInfo && oldInfo instanceof GithubLinkInfo) {
-                boolean hasNewPullRequests = !Objects.equals(
+            boolean hasNewPullRequests = !Objects.equals(
                     ((GithubLinkInfo) linkInfo).getPullRequestsCount(),
                     ((GithubLinkInfo) oldInfo).getPullRequestsCount()
                 );

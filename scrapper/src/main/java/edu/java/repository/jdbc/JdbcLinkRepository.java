@@ -97,11 +97,13 @@ public class JdbcLinkRepository {
     @Transactional
     public LinkInfo updateLink(LinkInfo linkInfo) {
         Link link = linkInfo.getLink();
-        jdbcClient.sql(UPDATE_LAST_CHECK_LINK).param(linkInfo.getLastUpdate()).param(link.getId()).update();
+        jdbcClient.sql(UPDATE_LAST_CHECK_LINK).param(linkInfo.getLastUpdate().get()).param(link.getId()).update();
         LinkInfo oldInfo;
 
         if (linkInfo instanceof GithubLinkInfo) {
-            String find = "SELECT last_update, pull_requests_count FROM github_links WHERE link_id = ? FOR UPDATE";
+            String find =
+                    "SELECT last_update, pull_requests_count FROM links "
+                  + "INNER JOIN github_links ON id = link_id WHERE link_id = ? FOR UPDATE";
             oldInfo = jdbcClient.sql(find).param(link.getId()).query((rs, rowNum) -> {
                 Integer pullRequestsCount = rs.getInt("pull_requests_count");
                 return new GithubLinkInfo(link, Optional.ofNullable(link.getLastUpdate()), pullRequestsCount);

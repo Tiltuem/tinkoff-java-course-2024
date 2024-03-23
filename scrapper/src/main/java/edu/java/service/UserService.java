@@ -13,4 +13,6 @@ public interface UserService {
     User getUserById(Long id);
 
     List<Long> getUsersTrackLink(Long linkId);
+
+    User getByChatId(Long chatId);
 }

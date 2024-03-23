@@ -1,5 +1,6 @@
 package edu.java.repository.jooq.service;
 
+import edu.java.exception.ChatIdNotFoundException;
 import edu.java.exception.UserIsNotRegisteredException;
 import edu.java.model.User;
 import edu.java.repository.jooq.repository.JooqUserRepository;
@@ -37,5 +38,11 @@ public class JooqUserService implements UserService {
     @Override
     public List<Long> getUsersTrackLink(Long linkId) {
         return userRepository.findUsersTrackLink(linkId);
+    }
+
+    @Override
+    public User getByChatId(Long chatId) {
+        return userRepository.findByChatId(chatId)
+            .orElseThrow(() -> new ChatIdNotFoundException("ChatId = %s not found.".formatted(chatId)));
     }
 }

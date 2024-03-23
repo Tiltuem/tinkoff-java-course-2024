@@ -1,5 +1,6 @@
 package edu.java.service.impl;
 
+import edu.java.exception.ChatIdNotFoundException;
 import edu.java.exception.UserIsNotRegisteredException;
 import edu.java.model.User;
 import edu.java.repository.jdbc.JdbcUserRepository;
@@ -37,5 +38,11 @@ public class JdbcUserService implements UserService {
     @Override
     public List<Long> getUsersTrackLink(Long linkId) {
         return repository.findUsersTrackLink(linkId);
+    }
+
+    @Override
+    public User getByChatId(Long chatId) {
+        return repository.findByChatId(chatId)
+            .orElseThrow(() -> new ChatIdNotFoundException("ChatId = %s not found.".formatted(chatId)));
     }
 }
