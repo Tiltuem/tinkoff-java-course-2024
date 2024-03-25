@@ -1,9 +1,9 @@
 package edu.java.util.updateChecker;
 
 import edu.java.client.GitHubClient;
-import edu.java.model.GithubLinkInfo;
 import edu.java.model.Link;
-import edu.java.model.LinkInfo;
+import edu.java.model.info.GithubLinkInfo;
+import edu.java.model.info.LinkInfo;
 import edu.java.model.response.GitHubPullRequestsResponse;
 import edu.java.model.response.GitHubRepositoryResponse;
 import edu.java.service.LinkUpdater;

@@ -5,9 +5,7 @@ import edu.java.repository.jooq.repository.JooqSiteRepository;
 import edu.java.service.SiteService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class JooqSiteService implements SiteService {
     private final JooqSiteRepository jooqSiteRepository;

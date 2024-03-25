@@ -2,12 +2,10 @@ package edu.java.service.jdbc;
 
 import edu.java.model.Site;
 import edu.java.repository.jdbc.JdbcSiteRepository;
-import java.util.List;
 import edu.java.service.SiteService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class JdbcSiteService implements SiteService {
     private final JdbcSiteRepository jdbcSiteRepository;

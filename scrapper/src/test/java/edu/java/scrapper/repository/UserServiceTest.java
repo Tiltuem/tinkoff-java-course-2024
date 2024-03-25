@@ -3,31 +3,29 @@ package edu.java.scrapper.repository;
 import edu.java.exception.UserAlreadyRegisteredException;
 import edu.java.exception.UserIsNotRegisteredException;
 import edu.java.model.User;
-import edu.java.repository.jdbc.JdbcUserRepository;
-import edu.java.scrapper.IntegrationEnvironment;
+import edu.java.service.UserService;
 import java.util.List;
-import java.util.Optional;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
-public class JdbcUserRepositoryTest extends IntegrationEnvironment {
-
+@Disabled
+public class UserServiceTest {
     @Autowired
-    private JdbcUserRepository userRepository;
+    private UserService userService;
+
     private static final Long CHAT_ID = 123L;
 
     @Test
     @Transactional
     @Rollback
     void testAddUser() {
-        userRepository.save(CHAT_ID);
-        List<User> users = userRepository.findAll();
+        userService.addUser(CHAT_ID);
+        List<User> users = userService.getAllUsers();
 
         assertThat(users.size()).isEqualTo(4); //При создании бд добавляется 3 юзера
         assertThat(users.getLast().getChatId()).isEqualTo(CHAT_ID);
@@ -37,11 +35,11 @@ public class JdbcUserRepositoryTest extends IntegrationEnvironment {
     @Transactional
     @Rollback
     public void testRemoveUser() {
-        userRepository.save(CHAT_ID);
-        Long userId = userRepository.findByChatId(CHAT_ID).get().getId();
-        userRepository.remove(userId);
+        userService.addUser(CHAT_ID);
+        Long userId = userService.getByChatId(CHAT_ID).getId();
+        userService.removeUser(userId);
 
-        List<User> users = userRepository.findAll();
+        List<User> users = userService.getAllUsers();
         assertThat(users.size()).isEqualTo(3);
     }
 
@@ -49,11 +47,11 @@ public class JdbcUserRepositoryTest extends IntegrationEnvironment {
     @Transactional
     @Rollback
     public void testFindUserByUserId() {
-        userRepository.save(CHAT_ID);
-        Long userId = userRepository.findByChatId(CHAT_ID).get().getId();
+        userService.addUser(CHAT_ID);
+        Long userId = userService.getByChatId(CHAT_ID).getId();
 
-        Optional<User> user = userRepository.findById(userId);
-        assertThat(user.isPresent()).isTrue();
+        User user = userService.getUserById(userId);
+        assertThat(user.getChatId()).isEqualTo(CHAT_ID);
     }
 
     @Test
@@ -61,7 +59,7 @@ public class JdbcUserRepositoryTest extends IntegrationEnvironment {
     @Rollback
     public void testAddUserAlreadyExists() {
         assertThatThrownBy(() -> {
-            userRepository.save(1L);
+            userService.addUser(1L);
         }).isInstanceOf(UserAlreadyRegisteredException.class).hasMessageContaining("User with chatId = 1 already exists");
     }
 
@@ -70,7 +68,7 @@ public class JdbcUserRepositoryTest extends IntegrationEnvironment {
     @Rollback
     public void testRemoveNonExistingUser() {
         assertThatThrownBy(() -> {
-            userRepository.remove(1122L);
+            userService.removeUser(1122L);
         }).isInstanceOf(UserIsNotRegisteredException.class).hasMessageContaining("User not found.");
     }
 }

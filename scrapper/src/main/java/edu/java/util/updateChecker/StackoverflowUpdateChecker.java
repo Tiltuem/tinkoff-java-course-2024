@@ -2,7 +2,7 @@ package edu.java.util.updateChecker;
 
 import edu.java.client.StackOverflowClient;
 import edu.java.model.Link;
-import edu.java.model.StackoverflowLinkInfo;
+import edu.java.model.info.StackoverflowLinkInfo;
 import edu.java.model.response.StackOverflowQuestionItemResponse;
 import edu.java.service.LinkUpdater;
 import java.util.Arrays;

@@ -1,5 +1,6 @@
-package edu.java.model;
+package edu.java.model.info;
 
+import edu.java.model.Link;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import lombok.Data;

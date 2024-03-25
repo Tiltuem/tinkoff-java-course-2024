@@ -2,57 +2,47 @@ package edu.java.service.jooq;
 
 import edu.java.dto.LinkResponse;
 import edu.java.exception.SiteNotFoundException;
-import edu.java.model.GithubLinkInfo;
 import edu.java.model.Link;
-import edu.java.model.LinkInfo;
-import edu.java.model.StackoverflowLinkInfo;
+import edu.java.model.info.GithubLinkInfo;
+import edu.java.model.info.LinkInfo;
+import edu.java.model.info.StackoverflowLinkInfo;
 import edu.java.repository.jooq.repository.JooqLinkRepository;
 import edu.java.repository.jooq.repository.JooqSiteRepository;
-import edu.java.repository.jooq.repository.JooqUserRepository;
 import edu.java.service.LinkService;
-import edu.java.util.updateChecker.UpdateChecker;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import static edu.java.exception.ExceptionsString.SITE_URL_NOT_FOUND;
 
-@Service
 @RequiredArgsConstructor
 public class JooqLinkService implements LinkService {
     private final JooqLinkRepository linkRepository;
-    private final JooqUserRepository userRepository;
     private final JooqSiteRepository siteRepository;
-    private final List<UpdateChecker> updateCheckerList;
 
     @Override
     public LinkResponse addUserLink(Long chatId, URI url) {
-        Link link = new Link(null, url, OffsetDateTime.now(), parseSite(url));
-        for (UpdateChecker checker : updateCheckerList) {
-            if (checker.isAppropriateLink(link)) {
-                try {
-                    checker.checkUpdates(link);
-                } catch (RuntimeException e) {
-                    throw new RuntimeException("Incorrect link, please try again");
-                }
-            }
-        }
+        Link link = Link.builder().url(url).lastCheck(OffsetDateTime.now()).siteId(parseSite(url)).build();
+
         LinkInfo linkInfo;
-        if (link.getSiteId() == 1) {
+        if (Objects.equals(link.getSiteId(), siteRepository.findByName("github.com").get().getId())) {
             linkInfo = new GithubLinkInfo(link, Optional.of(OffsetDateTime.now()), 0);
-        } else {
+        } else if (Objects.equals(link.getSiteId(), siteRepository.findByName("stackOverFlow.com").get().getId())) {
             linkInfo = new StackoverflowLinkInfo(link, Optional.of(OffsetDateTime.now()), 0);
+        } else {
+            throw new SiteNotFoundException(SITE_URL_NOT_FOUND.getMessage().formatted(url.getHost()));
         }
 
-        linkRepository.saveUserLink(chatId, linkInfo);
+        linkRepository.saveUserLink(chatId, linkInfo, parseSite(url));
 
         return new LinkResponse(linkRepository.findByUrl(url).get().getId(), url);
     }
 
     @Override
-    public LinkResponse removeUserLink(Long chatId, URI uri) {
-        return linkRepository.removeUserLink(chatId, uri);
+    public LinkResponse removeUserLink(Long chatId, URI url) {
+        return linkRepository.removeUserLink(chatId, url);
     }
 
     @Override
@@ -65,10 +55,15 @@ public class JooqLinkService implements LinkService {
         return linkRepository.findAllLinksWithCheckInterval(interval);
     }
 
+    @Override
+    public LinkInfo updateLink(LinkInfo linkInfo) {
+        return linkRepository.updateLink(linkInfo);
+    }
+
     private Long parseSite(URI url) {
         return siteRepository.findByName(url.getHost())
             .orElseThrow(
-                () -> new SiteNotFoundException("The site with the url = %s not found.".formatted(url.getHost())))
+                () -> new SiteNotFoundException(SITE_URL_NOT_FOUND.getMessage().formatted(url.getHost())))
             .getId();
     }
 }

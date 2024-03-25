@@ -1,9 +1,10 @@
-package edu.java.service;
+package edu.java.service.updater;
 
 import edu.java.bot.BotClient;
 import edu.java.model.Link;
-import edu.java.service.jdbc.JdbcLinkService;
-import edu.java.service.jdbc.JdbcUserService;
+import edu.java.service.LinkService;
+import edu.java.service.LinkUpdater;
+import edu.java.service.UserService;
 import edu.java.util.updateChecker.UpdateChecker;
 import java.time.Duration;
 import java.util.List;
@@ -21,8 +22,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class LinkUpdaterScheduler {
     static int counter = 1;
-    private final JdbcLinkService linkService;
-    private final JdbcUserService userService;
+    private final LinkService linkService;
+    private final UserService userService;
     private final BotClient botClient;
     private final List<UpdateChecker> updateCheckerList;
     private final LinkUpdater linkUpdater;
@@ -44,9 +45,13 @@ public class LinkUpdaterScheduler {
     private void updateLink(Link link) {
         for (UpdateChecker checker : updateCheckerList) {
             if (checker.isAppropriateLink(link)) {
-                Optional<String> result = checker.checkUpdates(link);
-                result.ifPresent(updateMessage -> sendUpdatesToUsers(link, updateMessage));
-                break;
+                try {
+                    Optional<String> result = checker.checkUpdates(link);
+                    result.ifPresent(updateMessage -> sendUpdatesToUsers(link, updateMessage));
+                    break;
+                } catch (RuntimeException e) {
+                    throw new RuntimeException("Incorrect link, please try again");
+                }
             }
         }
     }

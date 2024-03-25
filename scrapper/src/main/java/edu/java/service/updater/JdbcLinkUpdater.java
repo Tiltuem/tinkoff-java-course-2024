@@ -1,9 +1,9 @@
-package edu.java.service;
+package edu.java.service.updater;
 
-import edu.java.model.GithubLinkInfo;
-import edu.java.model.LinkInfo;
-import edu.java.model.StackoverflowLinkInfo;
-import edu.java.repository.jdbc.JdbcLinkRepository;
+import edu.java.model.info.GithubLinkInfo;
+import edu.java.model.info.LinkInfo;
+import edu.java.model.info.StackoverflowLinkInfo;
+import edu.java.service.LinkService;
 import edu.java.service.LinkUpdater;
 import java.util.Objects;
 import java.util.Optional;
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class JdbcLinkUpdater implements LinkUpdater {
-    private final JdbcLinkRepository linkRepository;
+    private final LinkService linkService;
 
     @Override
     public Optional<String> update(LinkInfo linkInfo) {
-        LinkInfo oldInfo = linkRepository.updateLink(linkInfo);
+        LinkInfo oldInfo = linkService.updateLink(linkInfo);
 
         String response = null;
         if (linkInfo.getLastUpdate().isPresent() && oldInfo.getLastUpdate().isPresent()
@@ -26,7 +26,7 @@ public class JdbcLinkUpdater implements LinkUpdater {
             response = "Link updated";
 
             if (linkInfo instanceof GithubLinkInfo && oldInfo instanceof GithubLinkInfo) {
-                boolean hasNewPullRequests = !Objects.equals(
+            boolean hasNewPullRequests = !Objects.equals(
                     ((GithubLinkInfo) linkInfo).getPullRequestsCount(),
                     ((GithubLinkInfo) oldInfo).getPullRequestsCount()
                 );

@@ -1,6 +1,6 @@
 package edu.java.service;
 
-import edu.java.model.LinkInfo;
+import edu.java.model.info.LinkInfo;
 import java.util.Optional;
 
 public interface LinkUpdater {

@@ -1,7 +1,7 @@
 package edu.java.controller;
 
 import edu.java.model.Site;
-import edu.java.service.jdbc.JdbcSiteService;
+import edu.java.service.SiteService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/sites")
 @RequiredArgsConstructor
 public class SiteController {
-    private final JdbcSiteService siteService;
+    private final SiteService siteService;
 
     @GetMapping("/get-all")
     public List<Site> getAllSites() {

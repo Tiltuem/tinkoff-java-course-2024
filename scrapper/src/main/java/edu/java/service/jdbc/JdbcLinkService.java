@@ -3,42 +3,29 @@ package edu.java.service.jdbc;
 import edu.java.dto.LinkResponse;
 import edu.java.exception.SiteNotFoundException;
 import edu.java.model.Link;
+import edu.java.model.info.LinkInfo;
 import edu.java.repository.jdbc.JdbcLinkRepository;
 import edu.java.repository.jdbc.JdbcSiteRepository;
 import edu.java.service.LinkService;
-import edu.java.util.updateChecker.UpdateChecker;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import static edu.java.exception.ExceptionsString.SITE_URL_NOT_FOUND;
 
-@Service
 @RequiredArgsConstructor
 public class JdbcLinkService implements LinkService {
     private final JdbcLinkRepository repository;
     private final JdbcSiteRepository jdbcSiteRepository;
-    private final List<UpdateChecker> updateCheckerList;
 
     @Override
-    public LinkResponse addUserLink(Long chatId, URI uri) {
-        Link link = new Link(null, uri, null, null);
-        for (UpdateChecker checker : updateCheckerList) {
-            if (checker.isAppropriateLink(link)) {
-                try {
-                    checker.checkUpdates(link);
-                } catch (RuntimeException e) {
-                    throw new RuntimeException("Incorrect link, please try again");
-                }
-            }
-        }
-
-        repository.saveUserLink(chatId, uri, parseSite(uri));
-        return new LinkResponse(repository.findByUrl(uri).get().getId(), uri);
+    public LinkResponse addUserLink(Long chatId, URI url) {
+        repository.saveUserLink(chatId, url, parseSite(url));
+        return new LinkResponse(repository.findByUrl(url).get().getId(), url);
     }
 
     @Override
-    public LinkResponse removeUserLink(Long chatId, URI uri) {
-        return repository.removeUserLink(chatId, uri);
+    public LinkResponse removeUserLink(Long chatId, URI url) {
+        return repository.removeUserLink(chatId, url);
     }
 
     @Override
@@ -51,10 +38,15 @@ public class JdbcLinkService implements LinkService {
         return repository.findAllLinksWithCheckInterval(interval);
     }
 
+    @Override
+    public LinkInfo updateLink(LinkInfo linkInfo) {
+        return repository.updateLink(linkInfo);
+    }
+
     private Long parseSite(URI url) {
         return jdbcSiteRepository.findByName(url.getHost())
             .orElseThrow(
-                () -> new SiteNotFoundException("The site with the url = %s not found.".formatted(url.getHost())))
+                () -> new SiteNotFoundException(SITE_URL_NOT_FOUND.getMessage().formatted(url.getHost())))
             .getId();
     }
 }

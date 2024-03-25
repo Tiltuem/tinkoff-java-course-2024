@@ -1,6 +1,6 @@
 package edu.java.controller;
 
-import edu.java.service.jdbc.JdbcUserService;
+import edu.java.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/tg-chat")
 @RequiredArgsConstructor
 public class ChatController {
-    private final JdbcUserService userService;
+    private final UserService userService;
 
     @PostMapping("/add/{chatId}")
     public void registerChat(@PathVariable Long chatId) {

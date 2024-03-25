@@ -5,28 +5,28 @@ import edu.java.exception.SiteNotFoundException;
 import edu.java.model.Site;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.stereotype.Repository;
+import static edu.java.exception.ExceptionsString.SITE_IS_ALREADY_EXISTS;
 
-@Repository
+@RequiredArgsConstructor
 public class JdbcSiteRepository {
     private static final String SAVE = "INSERT INTO sites(site_name) VALUES (?)";
     private static final String REMOVE = "DELETE FROM sites WHERE id = ?";
     private static final String FIND_ALL = "SELECT * FROM sites";
     private static final String FIND_BY_NAME = "SELECT * FROM sites WHERE site_name = ?";
     private static final BeanPropertyRowMapper<Site> MAPPER = new BeanPropertyRowMapper<>(Site.class);
-    @Autowired
-    private JdbcClient jdbcClient;
+
+    private final JdbcClient jdbcClient;
 
     public void save(String name) {
         try {
             jdbcClient.sql(SAVE).param(name).update();
         } catch (DataIntegrityViolationException e) {
-            throw new SiteAlreadyExistsException("Site with URL = %s already exists".formatted(name));
+            throw new SiteAlreadyExistsException(SITE_IS_ALREADY_EXISTS.getMessage().formatted(name));
         }
     }
 

@@ -9,12 +9,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
-import org.jooq.exception.DataAccessException;
-import org.springframework.stereotype.Repository;
+import org.springframework.dao.DuplicateKeyException;
+import static edu.java.exception.ExceptionsString.USER_IS_ALREADY_EXISTS;
 import static edu.java.repository.jooq.Tables.USERS;
 import static edu.java.repository.jooq.Tables.USER_LINKS;
 
-@Repository
 @RequiredArgsConstructor
 public class JooqUserRepository {
     private final DSLContext dslContext;
@@ -25,8 +24,8 @@ public class JooqUserRepository {
                 .insertInto(USERS)
                 .set(USERS.CHAT_ID, chatId)
                 .execute();
-        } catch (DataAccessException e) {
-            throw new UserAlreadyRegisteredException("User with chatId = %d already exists".formatted(chatId));
+        } catch (DuplicateKeyException e) {
+            throw new UserAlreadyRegisteredException(USER_IS_ALREADY_EXISTS.getMessage().formatted(chatId));
         }
     }
 

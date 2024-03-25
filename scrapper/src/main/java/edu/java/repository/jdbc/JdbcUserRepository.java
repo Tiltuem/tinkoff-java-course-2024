@@ -6,14 +6,14 @@ import edu.java.model.User;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.stereotype.Repository;
+import static edu.java.exception.ExceptionsString.USER_IS_ALREADY_EXISTS;
 
-@Repository
+@RequiredArgsConstructor
 public class JdbcUserRepository {
     private static final String SAVE = "INSERT INTO users(chat_id) VALUES (?)";
     private static final String REMOVE = "DELETE FROM users WHERE id = ?";
@@ -23,14 +23,13 @@ public class JdbcUserRepository {
     private static final String FIND_USERS_BY_LINK = "SELECT user_id FROM user_links WHERE link_id = ?";
 
     private static final BeanPropertyRowMapper<User> MAPPER = new BeanPropertyRowMapper<>(User.class);
-    @Autowired
-    private JdbcClient jdbcClient;
+    private final JdbcClient jdbcClient;
 
     public void save(Long chatId) {
         try {
             jdbcClient.sql(SAVE).param(chatId).update();
         } catch (DataIntegrityViolationException e) {
-            throw new UserAlreadyRegisteredException("User with chatId = %d already exists".formatted(chatId));
+            throw new UserAlreadyRegisteredException(USER_IS_ALREADY_EXISTS.getMessage().formatted(chatId));
         }
     }
 
