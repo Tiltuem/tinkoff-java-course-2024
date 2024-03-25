@@ -38,8 +38,9 @@ public class JpaLinkService implements LinkService {
         Long linkId;
 
         if (link.isEmpty()) {
-            repository.save(Link.builder().url(uri).siteId(parseSite(uri)).build());
-            linkId = repository.findByUrl(uri).get().getId();
+            Link newLink = Link.builder().url(uri).siteId(parseSite(uri)).build();
+            repository.save(newLink);
+            linkId = newLink.getId();
             addLinkToSpecificTable(uri, linkId);
         } else {
             linkId = link.get().getId();
@@ -50,7 +51,7 @@ public class JpaLinkService implements LinkService {
 
         repository.saveUserLink(userId, linkId);
 
-        return new LinkResponse(repository.findByUrl(uri).get().getId(), uri);
+        return new LinkResponse(linkId, uri);
     }
 
     @Override
