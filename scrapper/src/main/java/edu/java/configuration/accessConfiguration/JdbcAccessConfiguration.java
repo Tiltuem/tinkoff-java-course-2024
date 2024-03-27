@@ -1,7 +1,9 @@
 package edu.java.configuration.accessConfiguration;
 
+import edu.java.repository.jdbc.JdbcGithubLinkRepository;
 import edu.java.repository.jdbc.JdbcLinkRepository;
 import edu.java.repository.jdbc.JdbcSiteRepository;
+import edu.java.repository.jdbc.JdbcStackOverFlowLinkRepository;
 import edu.java.repository.jdbc.JdbcUserRepository;
 import edu.java.service.LinkService;
 import edu.java.service.SiteService;
@@ -9,6 +11,8 @@ import edu.java.service.UserService;
 import edu.java.service.jdbc.JdbcLinkService;
 import edu.java.service.jdbc.JdbcSiteService;
 import edu.java.service.jdbc.JdbcUserService;
+import edu.java.service.updater.GithubLinkUpdater;
+import edu.java.service.updater.StackOverFlowLinkUpdater;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +41,16 @@ public class JdbcAccessConfiguration {
     }
 
     @Bean
+    public JdbcStackOverFlowLinkRepository stackOverFlowLinkRepository() {
+        return new JdbcStackOverFlowLinkRepository(jdbcClient);
+    }
+
+    @Bean
+    public JdbcGithubLinkRepository githubLinkRepository() {
+        return new JdbcGithubLinkRepository(jdbcClient);
+    }
+
+    @Bean
     public UserService userService() {
         return new JdbcUserService(userRepository());
     }
@@ -49,5 +63,15 @@ public class JdbcAccessConfiguration {
     @Bean
     public SiteService siteService() {
         return new JdbcSiteService(siteRepository());
+    }
+
+    @Bean
+    public GithubLinkUpdater<JdbcGithubLinkRepository> githubLinkUpdater() {
+        return new GithubLinkUpdater<>(githubLinkRepository());
+    }
+
+    @Bean
+    public StackOverFlowLinkUpdater<JdbcStackOverFlowLinkRepository> stackOverFlowLinkUpdater() {
+        return new StackOverFlowLinkUpdater<>(stackOverFlowLinkRepository());
     }
 }

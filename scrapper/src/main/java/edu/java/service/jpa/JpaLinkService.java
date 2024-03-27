@@ -6,16 +6,12 @@ import edu.java.exception.LinkAlreadyTrackedException;
 import edu.java.exception.LinkIsNotTrackedException;
 import edu.java.exception.SiteNotFoundException;
 import edu.java.model.Link;
-import edu.java.model.info.GithubLinkInfo;
-import edu.java.model.info.LinkInfo;
-import edu.java.model.info.StackoverflowLinkInfo;
 import edu.java.repository.jpa.JpaLinkRepository;
 import edu.java.repository.jpa.JpaSiteRepository;
 import edu.java.repository.jpa.JpaUserRepository;
 import edu.java.service.LinkService;
 import jakarta.transaction.Transactional;
 import java.net.URI;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -82,34 +78,6 @@ public class JpaLinkService implements LinkService {
     @Override
     public List<Link> findLinksForUpdate(Long interval) {
         return repository.findAllLinksWithCheckInterval(interval);
-    }
-
-    @Override
-    @Transactional
-    public LinkInfo updateLink(LinkInfo linkInfo) {
-        Link link = linkInfo.getLink();
-        link.setLastUpdate(linkInfo.getLastUpdate().get());
-        link.setLastCheck(OffsetDateTime.now());
-        repository.save(link);
-
-        LinkInfo oldInfo;
-
-        if (linkInfo instanceof GithubLinkInfo) {
-            Integer pullRequestsCount = repository.findPullRequestsCountAtLink(link.getId());
-            oldInfo = new GithubLinkInfo(link, Optional.ofNullable(link.getLastUpdate()), pullRequestsCount);
-
-            repository.updateGithubLink(link.getId(), pullRequestsCount);
-        } else if (linkInfo instanceof StackoverflowLinkInfo) {
-            Integer answersCount = repository.findAnswersCountAtLink(link.getId());
-            oldInfo = new StackoverflowLinkInfo(link, Optional.ofNullable(link.getLastUpdate()), answersCount);
-
-            repository.updateStackOverFlowLink(link.getId(), answersCount);
-        } else {
-            throw new RuntimeException();
-        }
-
-        return oldInfo;
-
     }
 
     private Long parseSite(URI url) {

@@ -3,26 +3,21 @@ package edu.java.util.updateChecker;
 import edu.java.client.GitHubClient;
 import edu.java.model.Link;
 import edu.java.model.info.GithubLinkInfo;
-import edu.java.model.info.LinkInfo;
 import edu.java.model.response.GitHubPullRequestsResponse;
 import edu.java.model.response.GitHubRepositoryResponse;
-import edu.java.service.LinkUpdater;
+import edu.java.repository.GithubLinkRepository;
+import edu.java.service.updater.GithubLinkUpdater;
 import java.util.Objects;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GitHubUpdateChecker implements UpdateChecker {
+@RequiredArgsConstructor
+public class GitHubUpdateChecker<T extends GithubLinkRepository> implements UpdateChecker {
     private static final String HOST = "github.com";
     private final GitHubClient gitHubClient;
-    private final LinkUpdater linkUpdater;
-
-    @Autowired
-    public GitHubUpdateChecker(GitHubClient gitHubClient, LinkUpdater linkUpdater) {
-        this.gitHubClient = gitHubClient;
-        this.linkUpdater = linkUpdater;
-    }
+    private final GithubLinkUpdater<T> linkUpdater;
 
     @Override
     public Optional<String> checkUpdates(Link link) {
@@ -33,7 +28,7 @@ public class GitHubUpdateChecker implements UpdateChecker {
 
         GitHubPullRequestsResponse pullRequestsResponse = gitHubClient.fetchPullRequests(ownerName, repositoryName);
 
-        LinkInfo linkInfo = new GithubLinkInfo(
+        GithubLinkInfo linkInfo = new GithubLinkInfo(
             link,
             Optional.ofNullable(response).map(GitHubRepositoryResponse::updatedAt),
             Objects.requireNonNull(pullRequestsResponse).pullRequestsCount()

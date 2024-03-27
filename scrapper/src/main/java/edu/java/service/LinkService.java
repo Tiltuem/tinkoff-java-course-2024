@@ -2,7 +2,6 @@ package edu.java.service;
 
 import edu.java.dto.LinkResponse;
 import edu.java.model.Link;
-import edu.java.model.info.LinkInfo;
 import java.net.URI;
 import java.util.List;
 
@@ -14,6 +13,4 @@ public interface LinkService {
     List<Link> getAllUserLinks(Long id);
 
     List<Link> findLinksForUpdate(Long interval);
-
-    LinkInfo updateLink(LinkInfo linkInfo);
 }

@@ -3,7 +3,6 @@ package edu.java.service.jdbc;
 import edu.java.dto.LinkResponse;
 import edu.java.exception.SiteNotFoundException;
 import edu.java.model.Link;
-import edu.java.model.info.LinkInfo;
 import edu.java.repository.jdbc.JdbcLinkRepository;
 import edu.java.repository.jdbc.JdbcSiteRepository;
 import edu.java.service.LinkService;
@@ -36,11 +35,6 @@ public class JdbcLinkService implements LinkService {
     @Override
     public List<Link> findLinksForUpdate(Long interval) {
         return repository.findAllLinksWithCheckInterval(interval);
-    }
-
-    @Override
-    public LinkInfo updateLink(LinkInfo linkInfo) {
-        return repository.updateLink(linkInfo);
     }
 
     private Long parseSite(URI url) {

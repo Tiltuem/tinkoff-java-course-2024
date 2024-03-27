@@ -5,9 +5,6 @@ import edu.java.exception.ChatIdNotFoundException;
 import edu.java.exception.LinkAlreadyTrackedException;
 import edu.java.exception.LinkIsNotTrackedException;
 import edu.java.model.Link;
-import edu.java.model.info.GithubLinkInfo;
-import edu.java.model.info.LinkInfo;
-import edu.java.model.info.StackoverflowLinkInfo;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -16,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.transaction.annotation.Transactional;
 import static edu.java.exception.ExceptionsString.CHAT_ID_NOT_FOUND;
 import static edu.java.exception.ExceptionsString.LINK_IS_ALREADY_TRACKED;
 import static edu.java.exception.ExceptionsString.LINK_URL_NOT_FOUND;
@@ -89,39 +85,7 @@ public class JdbcLinkRepository {
         }
     }
 
-    @Transactional
-    public LinkInfo updateLink(LinkInfo linkInfo) {
-        Link link = linkInfo.getLink();
-        jdbcClient.sql(UPDATE_LAST_CHECK_LINK).param(linkInfo.getLastUpdate().get()).param(link.getId()).update();
-        LinkInfo oldInfo;
 
-        if (linkInfo instanceof GithubLinkInfo) {
-            String find =
-                "SELECT pull_requests_count FROM links "
-                    + "INNER JOIN github_links ON id = link_id WHERE link_id = ? FOR UPDATE";
-            oldInfo = jdbcClient.sql(find).param(link.getId()).query((rs, rowNum) -> {
-                Integer pullRequestsCount = rs.getInt("pull_requests_count");
-                return new GithubLinkInfo(link, Optional.ofNullable(link.getLastUpdate()), pullRequestsCount);
-            }).single();
-
-            String update = "UPDATE github_links SET pull_requests_count = ? WHERE link_id = ?";
-            jdbcClient.sql(update).param(((GithubLinkInfo) linkInfo).getPullRequestsCount(), link.getId());
-        } else if (linkInfo instanceof StackoverflowLinkInfo) {
-            String find = "SELECT answers_count FROM links "
-                + "INNER JOIN stackoverflow_links ON id = link_id WHERE link_id = ? FOR UPDATE";
-            oldInfo = jdbcClient.sql(find).param(link.getId()).query((rs, rowNum) -> {
-                Integer answersCount = rs.getInt("answers_count");
-                return new StackoverflowLinkInfo(link, Optional.ofNullable(link.getLastUpdate()), answersCount);
-            }).single();
-
-            String update = "UPDATE stackoverflow_links SET answers_count = ? WHERE link_id = ?";
-            jdbcClient.sql(update).param(((StackoverflowLinkInfo) linkInfo).getAnswersCount(), link.getId());
-        } else {
-            throw new RuntimeException();
-        }
-
-        return oldInfo;
-    }
 
     public List<Link> findAllLinksWithCheckInterval(Long interval) {
         return jdbcClient.sql(FIND_ALL_LINKS_WITH_CHECK_INTERVAL).param(interval).query(MAPPER).list();

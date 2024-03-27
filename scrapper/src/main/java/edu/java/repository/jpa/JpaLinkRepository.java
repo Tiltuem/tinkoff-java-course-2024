@@ -16,6 +16,29 @@ public interface JpaLinkRepository extends JpaRepository<Link, Long> {
 
     Optional<Link> findByUrl(URI uri);
 
+    @Query(value = "SELECT count(*) FROM user_links WHERE user_id = ?1 AND link_id = ?2",
+           nativeQuery = true)
+    Long findUserLink(Long userId, Long linkId);
+
+    @Query(value = "SELECT count(*) FROM user_links WHERE link_id = ?1",
+           nativeQuery = true)
+    Long countUserLinksById(Long linkId);
+
+    @Query(value = "SELECT * FROM links WHERE last_check IS NULL OR "
+        + "EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_check)) > ?1",
+           nativeQuery = true)
+    List<Link> findAllLinksWithCheckInterval(Long interval);
+
+    @Query(value = "SELECT pull_requests_count FROM links "
+        + "INNER JOIN github_links ON id = link_id WHERE link_id = ?1 FOR UPDATE",
+           nativeQuery = true)
+    Integer findPullRequestsCountAtLink(Long id);
+
+    @Query(value = "SELECT answers_count FROM links "
+        + "INNER JOIN stackoverflow_links ON id = link_id WHERE link_id = ?1 FOR UPDATE",
+           nativeQuery = true)
+    Integer findAnswersCountAtLink(Long id);
+
     @Modifying(clearAutomatically = true)
     @Query(value = "INSERT INTO github_links(link_id) VALUES (?1)",
            nativeQuery = true)
@@ -35,29 +58,6 @@ public interface JpaLinkRepository extends JpaRepository<Link, Long> {
     @Query(value = "DELETE FROM user_links WHERE user_id = ?1 AND link_id = ?2",
            nativeQuery = true)
     void deleteUserLink(Long userId, Long linkId);
-
-    @Query(value = "SELECT count(*) FROM user_links WHERE user_id = ?1 AND link_id = ?2",
-           nativeQuery = true)
-    Long findUserLink(Long userId, Long linkId);
-
-    @Query(value = "SELECT count(*) FROM user_links WHERE link_id = ?1",
-           nativeQuery = true)
-    Long countUserLinksById(Long linkId);
-
-    @Query(value = "SELECT * FROM links WHERE last_check IS NULL OR "
-                + "EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_check)) > ?1",
-           nativeQuery = true)
-    List<Link> findAllLinksWithCheckInterval(Long interval);
-
-    @Query(value = "SELECT pull_requests_count FROM links "
-        + "INNER JOIN github_links ON id = link_id WHERE link_id = ?1 FOR UPDATE",
-           nativeQuery = true)
-    Integer findPullRequestsCountAtLink(Long id);
-
-    @Query(value = "SELECT answers_count FROM links "
-        + "INNER JOIN stackoverflow_links ON id = link_id WHERE link_id = ?1 FOR UPDATE",
-           nativeQuery = true)
-    Integer findAnswersCountAtLink(Long id);
 
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE github_links SET pull_requests_count = ?2 WHERE link_id = ?1",

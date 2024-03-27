@@ -4,24 +4,20 @@ import edu.java.client.StackOverflowClient;
 import edu.java.model.Link;
 import edu.java.model.info.StackoverflowLinkInfo;
 import edu.java.model.response.StackOverflowQuestionItemResponse;
-import edu.java.service.LinkUpdater;
+import edu.java.repository.StackOverFlowLinkRepository;
+import edu.java.service.updater.StackOverFlowLinkUpdater;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-public class StackoverflowUpdateChecker implements UpdateChecker {
+@RequiredArgsConstructor
+public class StackoverflowUpdateChecker<T extends StackOverFlowLinkRepository> implements UpdateChecker {
     private static final String HOST = "stackoverflow.com";
     private final StackOverflowClient stackOverflowClient;
-    private final LinkUpdater linkUpdater;
-
-    @Autowired
-    public StackoverflowUpdateChecker(StackOverflowClient stackOverflowClient, LinkUpdater linkUpdater) {
-        this.stackOverflowClient = stackOverflowClient;
-        this.linkUpdater = linkUpdater;
-    }
+    private final StackOverFlowLinkUpdater<T> linkUpdater;
 
     @Override
     public Optional<String> checkUpdates(Link link) {

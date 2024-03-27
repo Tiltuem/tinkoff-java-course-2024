@@ -3,7 +3,6 @@ package edu.java.service.updater;
 import edu.java.bot.BotClient;
 import edu.java.model.Link;
 import edu.java.service.LinkService;
-import edu.java.service.LinkUpdater;
 import edu.java.service.UserService;
 import edu.java.util.updateChecker.UpdateChecker;
 import java.time.Duration;
@@ -26,7 +25,6 @@ public class LinkUpdaterScheduler {
     private final UserService userService;
     private final BotClient botClient;
     private final List<UpdateChecker> updateCheckerList;
-    private final LinkUpdater linkUpdater;
     @Value("#{@schedulerCheckInterval.toMillis()}")
     private Duration checkInterval;
 

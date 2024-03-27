@@ -3,6 +3,7 @@ package edu.java.scrapper.repository;
 import edu.java.exception.UserAlreadyRegisteredException;
 import edu.java.exception.UserIsNotRegisteredException;
 import edu.java.model.User;
+import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.service.UserService;
 import java.util.List;
 import org.junit.jupiter.api.Disabled;
@@ -14,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Disabled
-public class UserServiceTest {
+public class UserServiceTest extends IntegrationEnvironment {
     @Autowired
     private UserService userService;
 
@@ -60,7 +61,8 @@ public class UserServiceTest {
     public void testAddUserAlreadyExists() {
         assertThatThrownBy(() -> {
             userService.addUser(1L);
-        }).isInstanceOf(UserAlreadyRegisteredException.class).hasMessageContaining("User with chatId = 1 already exists");
+        }).isInstanceOf(UserAlreadyRegisteredException.class)
+            .hasMessageContaining("User with chatId = 1 already exists");
     }
 
     @Test

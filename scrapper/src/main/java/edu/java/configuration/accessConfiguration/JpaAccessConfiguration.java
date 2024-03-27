@@ -1,7 +1,9 @@
 package edu.java.configuration.accessConfiguration;
 
+import edu.java.repository.jpa.JpaGithubLinkRepository;
 import edu.java.repository.jpa.JpaLinkRepository;
 import edu.java.repository.jpa.JpaSiteRepository;
+import edu.java.repository.jpa.JpaStackOverFlowLinkRepository;
 import edu.java.repository.jpa.JpaUserRepository;
 import edu.java.service.LinkService;
 import edu.java.service.SiteService;
@@ -9,6 +11,8 @@ import edu.java.service.UserService;
 import edu.java.service.jpa.JpaLinkService;
 import edu.java.service.jpa.JpaSiteService;
 import edu.java.service.jpa.JpaUserService;
+import edu.java.service.updater.GithubLinkUpdater;
+import edu.java.service.updater.StackOverFlowLinkUpdater;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -35,5 +39,25 @@ public class JpaAccessConfiguration {
     @Bean
     public SiteService siteService() {
         return new JpaSiteService(jpaSiteRepository);
+    }
+
+    @Bean
+    public JpaStackOverFlowLinkRepository stackOverFlowLinkRepository() {
+        return new JpaStackOverFlowLinkRepository(jpaLinkRepository);
+    }
+
+    @Bean
+    public JpaGithubLinkRepository githubLinkRepository() {
+        return new JpaGithubLinkRepository(jpaLinkRepository);
+    }
+
+    @Bean
+    public GithubLinkUpdater<JpaGithubLinkRepository> githubLinkUpdater() {
+        return new GithubLinkUpdater<>(githubLinkRepository());
+    }
+
+    @Bean
+    public StackOverFlowLinkUpdater<JpaStackOverFlowLinkRepository> stackOverFlowLinkUpdater() {
+        return new StackOverFlowLinkUpdater<>(stackOverFlowLinkRepository());
     }
 }

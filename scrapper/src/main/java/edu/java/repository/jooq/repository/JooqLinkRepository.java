@@ -87,50 +87,6 @@ public class JooqLinkRepository {
         return new LinkResponse(linkId, url);
     }
 
-    public LinkInfo updateLink(LinkInfo linkInfo) {
-        Link link = linkInfo.getLink();
-        dslContext.update(LINKS)
-            .set(LINKS.LAST_CHECK, OffsetDateTime.now())
-            .set(LINKS.LAST_UPDATE, linkInfo.getLastUpdate().get())
-            .where(LINKS.ID.eq(link.getId()))
-            .execute();
-        LinkInfo oldInfo;
-
-        if (linkInfo instanceof GithubLinkInfo) {
-            oldInfo = dslContext.select(GITHUB_LINKS.PULL_REQUESTS_COUNT).from(LINKS)
-                .innerJoin(GITHUB_LINKS).on(GITHUB_LINKS.LINK_ID.eq(LINKS.ID))
-                .where(LINKS.ID.eq(link.getId()))
-                .fetchOne()
-                .map(row -> new GithubLinkInfo(
-                    link,
-                    Optional.ofNullable(link.getLastUpdate()),
-                    row.get(GITHUB_LINKS.PULL_REQUESTS_COUNT)
-                ));
-
-            dslContext.update(GITHUB_LINKS)
-                .set(GITHUB_LINKS.PULL_REQUESTS_COUNT, ((GithubLinkInfo) linkInfo).getPullRequestsCount())
-                .where(GITHUB_LINKS.LINK_ID.eq(link.getId())).execute();
-        } else if (linkInfo instanceof StackoverflowLinkInfo) {
-            oldInfo = dslContext.select(STACKOVERFLOW_LINKS.ANSWERS_COUNT).from(LINKS)
-                .innerJoin(STACKOVERFLOW_LINKS).on(STACKOVERFLOW_LINKS.LINK_ID.eq(LINKS.ID))
-                .where(LINKS.ID.eq(link.getId()))
-                .fetchOne()
-                .map(row -> new StackoverflowLinkInfo(
-                    link,
-                    Optional.ofNullable(link.getLastUpdate()),
-                    row.get(STACKOVERFLOW_LINKS.ANSWERS_COUNT)
-                ));
-
-            dslContext.update(STACKOVERFLOW_LINKS)
-                .set(STACKOVERFLOW_LINKS.ANSWERS_COUNT, ((StackoverflowLinkInfo) linkInfo).getAnswersCount())
-                .where(STACKOVERFLOW_LINKS.LINK_ID.eq(link.getId())).execute();
-        } else {
-            throw new RuntimeException();
-        }
-
-        return oldInfo;
-    }
-
     public List<Link> findAllLinksByUserId(Long userId) {
         return dslContext.select(LINKS.ID, LINKS.URL, LINKS.LAST_UPDATE, LINKS.SITE_ID)
             .from(LINKS)

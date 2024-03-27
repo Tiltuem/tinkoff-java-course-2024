@@ -55,11 +55,6 @@ public class JooqLinkService implements LinkService {
         return linkRepository.findAllLinksWithCheckInterval(interval);
     }
 
-    @Override
-    public LinkInfo updateLink(LinkInfo linkInfo) {
-        return linkRepository.updateLink(linkInfo);
-    }
-
     private Long parseSite(URI url) {
         return siteRepository.findByName(url.getHost())
             .orElseThrow(
