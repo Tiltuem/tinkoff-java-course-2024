@@ -1,8 +1,10 @@
 app:
   scheduler:
     enable: true
-    interval: 10s
+    invoke-interval: 10s
     force-check-delay: 10s
+    checkInterval: 600s
+  database-access-type: jdbc
 
 spring:
   application:
@@ -11,6 +13,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/scrapper
     username: postgres
     password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
   liquibase:
     enabled: false
 

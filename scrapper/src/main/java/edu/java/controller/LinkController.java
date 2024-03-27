@@ -4,9 +4,10 @@ import edu.java.dto.AddLinkRequest;
 import edu.java.dto.LinkResponse;
 import edu.java.dto.ListLinksResponse;
 import edu.java.dto.RemoveLinkRequest;
+import edu.java.service.LinkService;
 import java.net.URI;
 import java.util.List;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,28 +18,31 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/links")
+@RequiredArgsConstructor
 public class LinkController {
-    @GetMapping
-    public ResponseEntity<ListLinksResponse> getAllLinks(@RequestHeader(name = "Tg-Chat-Id") Long id) {
-        ListLinksResponse links = new ListLinksResponse(List.of(new LinkResponse(id, URI.create("example.com"))), 1);
-        return ResponseEntity.ok(links);
+    private final LinkService linkService;
+
+    @GetMapping("/get-all")
+    public ListLinksResponse getAllUserLinks(@RequestHeader(name = "Tg-Chat-Id") Long id) {
+        List<LinkResponse> links =
+            linkService.getAllUserLinks(id).stream().map(link -> new LinkResponse(link.getId(), link.getUrl()))
+                .toList();
+        return new ListLinksResponse(links, links.size());
     }
 
-    @PostMapping
-    public ResponseEntity<LinkResponse> addLink(
+    @PostMapping("/add")
+    public LinkResponse addUserLink(
         @RequestHeader(name = "Tg-Chat-Id") Long id,
         @RequestBody AddLinkRequest addLinkRequest
     ) {
-        LinkResponse linkResponse = new LinkResponse(id, URI.create(addLinkRequest.link()));
-        return ResponseEntity.ok(linkResponse);
+        return linkService.addUserLink(id, URI.create(addLinkRequest.link()));
     }
 
-    @DeleteMapping
-    public ResponseEntity<LinkResponse> removeLink(
+    @DeleteMapping("/delete")
+    public LinkResponse removeUserLink(
         @RequestHeader(name = "Tg-Chat-Id") Long id,
         @RequestBody RemoveLinkRequest removeLinkRequest
     ) {
-        LinkResponse linkResponse = new LinkResponse(id, removeLinkRequest.link());
-        return ResponseEntity.ok(linkResponse);
+        return linkService.removeUserLink(id, removeLinkRequest.link());
     }
 }

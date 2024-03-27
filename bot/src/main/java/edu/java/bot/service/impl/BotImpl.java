@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.BaseRequest;
+import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import com.pengrad.telegrambot.response.BaseResponse;
 import edu.java.bot.command.Command;
@@ -40,6 +41,11 @@ public class BotImpl implements Bot {
         }
 
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
+    }
+
+    @Override
+    public void sendMessage(Long chatId, String text) {
+        telegramBot.execute(new SendMessage(chatId, text));
     }
 
     @Override
