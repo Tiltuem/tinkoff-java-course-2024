@@ -10,7 +10,7 @@ public interface ScrapperClient {
 
     Mono<Void> deleteChat(Long chatId);
 
-    Mono<ListLinksResponse> listLinks(Long chatId);
+    Mono<ListLinksResponse> getAllListLinks(Long chatId);
 
     Mono<LinkResponse> addLink(Long chatId, URI link);
 

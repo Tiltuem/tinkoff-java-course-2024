@@ -22,7 +22,7 @@ public class MessageProcessorServiceImpl implements MessageProcessorService {
         return commandList;
     }
 
-    @Override
+    /*@Override
     public SendMessage process(Update update) {
         if (isRegistered(update)) {
             for (Command command : commandList) {
@@ -43,8 +43,16 @@ public class MessageProcessorServiceImpl implements MessageProcessorService {
             1L,
             "To be able to use the bot, you need to register"
         );
+    }*/
+    @Override
+    public SendMessage process(Update update) {
+            for (Command command : commandList) {
+                if (command.supports(update)) {
+                    return command.handle(update);
+                }
+            }
+            return new SendMessage(update.message().chat().id(), "Wrong command. Use /help to view a list of commands");
     }
-
 
     private boolean isRegistered(Update update) {
         StartCommand startCommand = new StartCommand(chatService);

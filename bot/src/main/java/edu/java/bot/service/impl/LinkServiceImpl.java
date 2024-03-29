@@ -2,11 +2,12 @@ package edu.java.bot.service.impl;
 
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.repository.LinkRepository;
+import edu.java.bot.scrapper.ScrapperClient;
 import edu.java.bot.service.LinkService;
-import edu.java.bot.util.LinkValidator;
-import edu.java.bot.util.SupportedWebsites;
-import java.util.Set;
+import edu.java.dto.ListLinksResponse;
+import edu.java.exception.CustomClientException;
+import java.net.URI;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
@@ -15,46 +16,45 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class LinkServiceImpl implements LinkService {
-    private final LinkRepository repository;
+    private final ScrapperClient scrapperClient;
 
     @Override
     public SendMessage getAllLink(Long id) {
-        Set<String> links = repository.findAll(id);
+        ListLinksResponse response = scrapperClient.getAllListLinks(id).block();
+        List<String> links = response.links().stream()
+            .map(linkResponse -> linkResponse.url().toString())
+            .toList();
 
         if (links.isEmpty()) {
             return new SendMessage(id, "No tracked links. Use /track to add a link");
         }
 
-        String allLinks = IntStream.range(1, links.size() + 1)
+        String message =  IntStream.range(1, links.size() + 1)
             .mapToObj(i -> i + ". " + links.toArray()[i - 1] + ";")
             .collect(Collectors.joining("\n"));
 
-        return new SendMessage(id, "List of tracked resources: \n\n" + allLinks).disableWebPagePreview(true);
+        return new SendMessage(id, "List of tracked resources: \n\n" + message).disableWebPagePreview(true);
     }
 
     @Override
     public SendMessage addLink(Long id, String link) {
-        if (!LinkValidator.linkExists(link)) {
-            return new SendMessage(id, "Sorry, this link does not exist, please try again.");
+        try {
+            scrapperClient.addLink(id, URI.create(link)).block();
+        } catch (CustomClientException e) {
+            return new SendMessage(id, e.getClientErrorResponse().exceptionMessage()).parseMode(ParseMode.HTML);
         }
 
-        if (!LinkValidator.siteIsSupported(link)) {
-            return new SendMessage(id, "The site is unsupported.\n\nList of supported sites: \n").replyMarkup(
-                SupportedWebsites.getAllSupportedWebsitesKeyboard());
-        }
-
-        if (repository.save(id, link)) {
-            return new SendMessage(id, "<b><i>Link successfully added!</i></b>").parseMode(ParseMode.HTML);
-        }
-
-        return new SendMessage(id, "Link is already tracking.").parseMode(ParseMode.HTML);
+        return new SendMessage(id, "<b><i>Link successfully added!</i></b>").parseMode(ParseMode.HTML);
     }
 
     @Override
     public SendMessage removeLink(Long id, String link) {
-        if (repository.deleteByLink(id, link)) {
-            return new SendMessage(id, "<b><i>Link successfully deleted!</i></b>").parseMode(ParseMode.HTML);
+        try {
+            scrapperClient.removeLink(id, URI.create(link)).block();
+        } catch (CustomClientException e) {
+            return new SendMessage(id, e.getClientErrorResponse().exceptionMessage()).parseMode(ParseMode.HTML);
         }
-        return new SendMessage(id, "Link is not tracking.").parseMode(ParseMode.HTML);
+
+        return new SendMessage(id, "<b><i>Link successfully deleted!</i></b>").parseMode(ParseMode.HTML);
     }
 }
