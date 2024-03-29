@@ -42,34 +42,34 @@ public class RestScrapperClientTest {
     @Test
     @DisplayName("testRegisterChat")
     public void testRegisterChat() {
-        WireMock.stubFor(WireMock.post(WireMock.urlEqualTo(CHAT_ENDPOINT_PREFIX + chatId))
+        WireMock.stubFor(WireMock.post(WireMock.urlEqualTo(CHAT_ENDPOINT_PREFIX + "add/" + chatId))
             .willReturn(WireMock.aResponse()
                 .withStatus(HttpStatus.SC_OK)
                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)));
         StepVerifier.create(restScrapperClient.registerChat(chatId))
             .verifyComplete();
 
-        WireMock.verify(WireMock.postRequestedFor(WireMock.urlEqualTo(CHAT_ENDPOINT_PREFIX + chatId)));
+        WireMock.verify(WireMock.postRequestedFor(WireMock.urlEqualTo(CHAT_ENDPOINT_PREFIX + "add/" + chatId)));
     }
 
     @Test
     @DisplayName("testDeleteChat")
     public void testDeleteChat() {
-        WireMock.stubFor(WireMock.delete(WireMock.urlEqualTo(CHAT_ENDPOINT_PREFIX + chatId))
+        WireMock.stubFor(WireMock.delete(WireMock.urlEqualTo(CHAT_ENDPOINT_PREFIX + "delete/" + chatId))
             .willReturn(WireMock.aResponse()
                 .withStatus(HttpStatus.SC_OK)
                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)));
-        StepVerifier.create(restScrapperClient.registerChat(chatId))
+        StepVerifier.create(restScrapperClient.deleteChat(chatId))
             .verifyComplete();
 
-        WireMock.verify(WireMock.postRequestedFor(WireMock.urlEqualTo(CHAT_ENDPOINT_PREFIX + chatId)));
+        WireMock.verify(WireMock.deleteRequestedFor(WireMock.urlEqualTo(CHAT_ENDPOINT_PREFIX + "delete/" + chatId)));
     }
 
     @Test
     @DisplayName("testAddLink")
     public void testAddLink() {
         URI link = URI.create("https://example.com");
-        WireMock.stubFor(WireMock.post(WireMock.urlEqualTo(LINKS_ENDPOINT))
+        WireMock.stubFor(WireMock.post(WireMock.urlEqualTo(LINKS_ENDPOINT + "/add"))
             .withHeader(TG_CHAT_ID_HEADER, WireMock.equalTo(chatId.toString()))
             .withRequestBody(equalToJson("{\"link\": \"https://example.com\"}"))
             .willReturn(WireMock.aResponse()
@@ -85,7 +85,7 @@ public class RestScrapperClientTest {
             })
             .verifyComplete();
 
-        WireMock.verify(WireMock.postRequestedFor(WireMock.urlEqualTo(LINKS_ENDPOINT))
+        WireMock.verify(WireMock.postRequestedFor(WireMock.urlEqualTo(LINKS_ENDPOINT + "/add"))
             .withHeader(TG_CHAT_ID_HEADER, WireMock.equalTo(chatId.toString()))
             .withRequestBody(equalToJson("{\"link\": \"https://example.com\"}")));
     }
@@ -94,7 +94,7 @@ public class RestScrapperClientTest {
     @DisplayName("testRemoveLink")
     public void testRemoveLink() {
         URI link = URI.create("https://example.com");
-        WireMock.stubFor(WireMock.delete(WireMock.urlEqualTo(LINKS_ENDPOINT))
+        WireMock.stubFor(WireMock.delete(WireMock.urlEqualTo(LINKS_ENDPOINT + "/delete"))
             .withHeader(TG_CHAT_ID_HEADER, WireMock.equalTo(chatId.toString()))
             .withRequestBody(equalToJson("{\"link\": \"https://example.com\"}"))
             .willReturn(WireMock.aResponse()
@@ -110,7 +110,7 @@ public class RestScrapperClientTest {
             })
             .verifyComplete();
 
-        WireMock.verify(WireMock.deleteRequestedFor(WireMock.urlEqualTo(LINKS_ENDPOINT))
+        WireMock.verify(WireMock.deleteRequestedFor(WireMock.urlEqualTo(LINKS_ENDPOINT + "/delete"))
             .withHeader(TG_CHAT_ID_HEADER, WireMock.equalTo(chatId.toString()))
             .withRequestBody(equalToJson("{\"link\": \"https://example.com\"}")));
     }

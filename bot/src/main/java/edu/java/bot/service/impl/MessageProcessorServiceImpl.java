@@ -22,28 +22,6 @@ public class MessageProcessorServiceImpl implements MessageProcessorService {
         return commandList;
     }
 
-    /*@Override
-    public SendMessage process(Update update) {
-        if (isRegistered(update)) {
-            for (Command command : commandList) {
-                if (command.supports(update)) {
-                    return command.handle(update);
-                }
-            }
-
-            return new SendMessage(update.message().chat().id(), "Wrong command. Use /help to view a list of commands");
-        } else if (Objects.nonNull(update.message())) {
-            return new SendMessage(
-                update.message().chat().id(),
-                "To be able to use the bot, you need to register. Use /start to do this"
-            );
-        }
-
-        return new SendMessage(
-            1L,
-            "To be able to use the bot, you need to register"
-        );
-    }*/
     @Override
     public SendMessage process(Update update) {
             for (Command command : commandList) {
@@ -51,7 +29,13 @@ public class MessageProcessorServiceImpl implements MessageProcessorService {
                     return command.handle(update);
                 }
             }
-            return new SendMessage(update.message().chat().id(), "Wrong command. Use /help to view a list of commands");
+
+            if (Objects.nonNull(update.message())) {
+                return new SendMessage(update.message().chat().id(),
+                    "Wrong command. Use /help to view a list of commands");
+            }
+
+            return new SendMessage(null,  "To be able to use the bot, you need to register");
     }
 
     private boolean isRegistered(Update update) {
