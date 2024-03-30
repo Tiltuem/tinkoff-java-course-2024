@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.command.Command;
 import edu.java.bot.repository.ChatStorage;
+import edu.java.bot.scrapper.RestScrapperClient;
 import edu.java.bot.service.impl.ChatServiceImpl;
 import edu.java.bot.service.impl.MessageProcessorServiceImpl;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.mock;
 public class MessageProcessorServiceTest {
     @Mock
     private Update update;
-    private final ChatService chatService = new ChatServiceImpl(new ChatStorage());
+    private final ChatService chatService = new ChatServiceImpl(new ChatStorage(), new RestScrapperClient(null));
 
     @InjectMocks
     private MessageProcessorServiceImpl messageProcessorService;

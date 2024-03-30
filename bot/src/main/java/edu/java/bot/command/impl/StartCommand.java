@@ -24,16 +24,6 @@ public class StartCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) {
-        if (!chatService.getById(update.message().chat().id())) {
-            chatService.register(update.message().chat().id());
-            return new SendMessage(
-                update.message().chat().id(),
-                "Welcome to the LinkTrackerBot!\nUse /help for information"
-            );
-        }
-        return new SendMessage(
-            update.message().chat().id(),
-            "You're already registered."
-        );
+        return chatService.register(update.message().chat().id());
     }
 }

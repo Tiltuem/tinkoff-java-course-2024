@@ -22,7 +22,12 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public Duration schedulerDelay(ApplicationConfig applicationConfig) {
-        return applicationConfig.scheduler().interval();
+    public Duration schedulerInvokeInterval(ApplicationConfig applicationConfig) {
+        return applicationConfig.scheduler().invokeInterval();
+    }
+
+    @Bean
+    public Duration schedulerCheckInterval(ApplicationConfig applicationConfig) {
+        return applicationConfig.scheduler().checkInterval();
     }
 }

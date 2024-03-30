@@ -1,7 +1,8 @@
 package edu.java.client;
 
-import edu.java.model.StackOverflowQuestionResponse;
+import edu.java.model.response.StackOverflowQuestionItemResponse;
+import java.util.Optional;
 
 public interface StackOverflowClient {
-    StackOverflowQuestionResponse fetchQuestion(Long id);
+    Optional<StackOverflowQuestionItemResponse> fetchQuestion(Long id);
 }

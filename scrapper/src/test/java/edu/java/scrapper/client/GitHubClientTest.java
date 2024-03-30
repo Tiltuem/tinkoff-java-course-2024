@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.client.GitHubClient;
 import edu.java.client.impl.GitHubClientImpl;
-import edu.java.model.GitHubRepositoryResponse;
+import edu.java.model.response.GitHubRepositoryResponse;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import org.junit.jupiter.api.DisplayName;
