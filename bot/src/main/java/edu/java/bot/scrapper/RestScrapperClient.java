@@ -7,9 +7,11 @@ import edu.java.dto.ListLinksResponse;
 import edu.java.dto.RemoveLinkRequest;
 import edu.java.exception.CustomClientException;
 import java.net.URI;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -22,6 +24,8 @@ public class RestScrapperClient implements ScrapperClient {
     private static final String DELETE = "delete";
     private static final String TG_CHAT_ID_HEADER = "Tg-Chat-Id";
     private final WebClient webClient;
+    @Autowired
+    private RetryTemplate retryTemplate;
 
     public RestScrapperClient(@Value("${client.scrapper.base-url:http://localhost:8080}") String baseUrl) {
         this.webClient = WebClient.builder().baseUrl(baseUrl).build();
@@ -29,34 +33,31 @@ public class RestScrapperClient implements ScrapperClient {
 
     @Override
     public Mono<Void> registerChat(Long chatId) {
-        return webClient
-            .post()
+        return retryTemplate.execute(ctx -> webClient.post()
             .uri(CHAT_ENDPOINT_PREFIX + ADD + "/" + chatId)
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, response ->
                 response.bodyToMono(ClientErrorResponse.class)
                     .flatMap(clientErrorResponse ->
                         Mono.error(new CustomClientException(clientErrorResponse))))
-            .bodyToMono(Void.class);
+            .bodyToMono(Void.class));
     }
 
     @Override
     public Mono<Void> deleteChat(Long chatId) {
-        return webClient
-            .delete()
+        return retryTemplate.execute(ctx -> webClient.delete()
             .uri(CHAT_ENDPOINT_PREFIX + DELETE + "/" + chatId)
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, response ->
                 response.bodyToMono(ClientErrorResponse.class)
                     .flatMap(clientErrorResponse ->
                         Mono.error(new CustomClientException(clientErrorResponse))))
-            .bodyToMono(Void.class);
+            .bodyToMono(Void.class));
     }
 
     @Override
     public Mono<ListLinksResponse> getAllListLinks(Long chatId) {
-        return webClient
-            .get()
+        return retryTemplate.execute(ctx -> webClient.get()
             .uri(LINKS_ENDPOINT + "/get-all")
             .header(TG_CHAT_ID_HEADER, chatId.toString())
             .retrieve()
@@ -64,13 +65,12 @@ public class RestScrapperClient implements ScrapperClient {
                 response.bodyToMono(ClientErrorResponse.class)
                     .flatMap(clientErrorResponse ->
                         Mono.error(new CustomClientException(clientErrorResponse))))
-            .bodyToMono(ListLinksResponse.class);
+            .bodyToMono(ListLinksResponse.class));
     }
 
     @Override
     public Mono<LinkResponse> addLink(Long chatId, URI link) {
-        return webClient
-            .post()
+        return retryTemplate.execute(ctx -> webClient.post()
             .uri(LINKS_ENDPOINT + ADD)
             .header(TG_CHAT_ID_HEADER, chatId.toString())
             .bodyValue(new AddLinkRequest(link.toString()))
@@ -79,13 +79,12 @@ public class RestScrapperClient implements ScrapperClient {
                 response.bodyToMono(ClientErrorResponse.class)
                     .flatMap(clientErrorResponse ->
                         Mono.error(new CustomClientException(clientErrorResponse))))
-            .bodyToMono(LinkResponse.class);
+            .bodyToMono(LinkResponse.class));
     }
 
     @Override
     public Mono<LinkResponse> removeLink(Long chatId, URI link) {
-        return webClient
-            .method(HttpMethod.DELETE)
+        return retryTemplate.execute(ctx -> webClient.method(HttpMethod.DELETE)
             .uri(LINKS_ENDPOINT + DELETE)
             .header(TG_CHAT_ID_HEADER, chatId.toString())
             .body(Mono.just(new RemoveLinkRequest(link)), RemoveLinkRequest.class)
@@ -94,6 +93,6 @@ public class RestScrapperClient implements ScrapperClient {
                 response.bodyToMono(ClientErrorResponse.class)
                     .flatMap(clientErrorResponse ->
                         Mono.error(new CustomClientException(clientErrorResponse))))
-            .bodyToMono(LinkResponse.class);
+            .bodyToMono(LinkResponse.class));
     }
 }

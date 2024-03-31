@@ -2,6 +2,7 @@ package edu.java.configuration;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.Duration;
+import java.util.Set;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.validation.annotation.Validated;
@@ -13,7 +14,9 @@ public record ApplicationConfig(
     @Bean
     Scheduler scheduler,
     @NotNull
-    AccessType databaseAccessType
+    AccessType databaseAccessType,
+    @NotNull
+    Retries retry
 ) {
     public record Scheduler(boolean enable, @NotNull Duration invokeInterval, @NotNull Duration forceCheckDelay,
                             @NotNull Duration checkInterval) {
@@ -23,5 +26,25 @@ public record ApplicationConfig(
         JDBC,
         JOOQ,
         JPA
+    }
+
+    public record Retries(Retry scrapper, Retry bot) {
+        public record Retry(
+            Set<Integer> httpStatuses,
+            Integer maxAttempts,
+            RetryType type,
+            RetryConfig config
+        ) {
+            public enum RetryType {
+                CONSTANT, LINEAR, EXPONENTIAL
+            }
+
+            public record RetryConfig(
+                Long initialIntervalMillis,
+                Long maxIntervalMillis,
+                Double multiplier
+            ) {
+            }
+        }
     }
 }

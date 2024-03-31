@@ -1,5 +1,13 @@
 app:
   telegram-token:
+  retry:
+    http-statuses: 429, 500
+    type: linear
+    max-attempts: 10
+    config:
+      initial-interval-millis: 5000
+      max-interval-millis: 50000
+      multiplier: 2
 
 client:
   scrapper:
@@ -10,6 +18,11 @@ spring:
     name: bot
   jackson:
     time-zone: UTC
+  cache:
+    cache-names:
+      - bot-rate-limit
+    caffeine:
+      spec: maximumSize=200000,expireAfterAccess=60s
 
 springdoc:
   swagger-ui:
@@ -20,3 +33,15 @@ server:
 
 logging:
   config: classpath:log4j2-plain.xml
+
+bucket4j:
+  filters:
+    - cache-name: bot-rate-limit
+      http-response-body: "{ \"status\": 429, \"error\": \"Too Many Requests\", \"message\": \"Too Many Requests\" }"
+      rate-limits:
+        - bandwidths:
+            - capacity: 100
+              refill-speed: interval
+              time: 1
+              unit: minutes
+      url: /.*
