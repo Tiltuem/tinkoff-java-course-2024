@@ -9,13 +9,22 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.retry.support.RetryTemplate;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static org.assertj.core.api.Assertions.assertThat;
 
+
 @WireMockTest
 public class GitHubClientTest {
+    private final GitHubClientImpl client;
+
+    public GitHubClientTest(WireMockRuntimeInfo wmRuntimeInfo) {
+        client = new GitHubClientImpl(wmRuntimeInfo.getHttpBaseUrl());
+        client.retryTemplate = new RetryTemplate();
+    }
+
     @Test
     @DisplayName("testFetchRepo")
     public void testFetchRepo(WireMockRuntimeInfo wmRuntimeInfo) {

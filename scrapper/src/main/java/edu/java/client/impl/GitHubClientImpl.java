@@ -12,7 +12,7 @@ public class GitHubClientImpl implements GitHubClient {
     private final WebClient webClient;
     @Autowired
     @Qualifier("scrapper")
-    protected RetryTemplate retryTemplate;
+    private RetryTemplate retryTemplate;
 
     public GitHubClientImpl(String baseUrl) {
         webClient = WebClient.builder().baseUrl(baseUrl).build();

@@ -2,7 +2,6 @@ package edu.java.bot.configuration;
 
 import edu.java.retry.RetryTemplates;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.support.RetryTemplate;

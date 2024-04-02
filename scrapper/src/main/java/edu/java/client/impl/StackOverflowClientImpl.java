@@ -13,7 +13,7 @@ public class StackOverflowClientImpl implements StackOverflowClient {
     private final WebClient webClient;
     @Autowired
     @Qualifier("scrapper")
-    protected RetryTemplate retryTemplate;
+    private RetryTemplate retryTemplate;
 
     public StackOverflowClientImpl(String baseUrl) {
         webClient = WebClient.builder().baseUrl(baseUrl).build();
