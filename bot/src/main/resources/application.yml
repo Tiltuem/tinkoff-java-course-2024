@@ -8,6 +8,12 @@ app:
       initial-interval-millis: 5000
       max-interval-millis: 50000
       multiplier: 2
+  kafka-config:
+    servers: localhost:9091,localhost:9092,localhost:9093
+    updates-topic:
+      name: updates
+      partitions: 2
+      replicas: 2
 
 client:
   scrapper:

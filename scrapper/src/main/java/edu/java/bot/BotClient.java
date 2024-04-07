@@ -1,8 +1,8 @@
 package edu.java.bot;
 
-import java.util.List;
+import edu.java.dto.LinkUpdateRequest;
 import reactor.core.publisher.Mono;
 
 public interface BotClient {
-    Mono<Void> sendUpdates(Long id, String url, String description, List<Long> tgChatIds);
+    Mono<Void> sendUpdates(LinkUpdateRequest request);
 }
