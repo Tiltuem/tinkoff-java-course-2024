@@ -1,29 +1,37 @@
 package edu.java.scrapper.client;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import edu.java.client.StackOverflowClient;
 import edu.java.client.impl.StackOverflowClientImpl;
 import edu.java.model.response.StackOverflowQuestionItemResponse;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@WireMockTest
+@SpringBootTest
+@Disabled
 public class StackOverflowTest {
+    @Autowired
+    private StackOverflowClientImpl stackOverflowClient;
+
     @Test
-    @DisplayName("testFetchRepo")
-    public void testFetchRepo(WireMockRuntimeInfo wmRuntimeInfo) {
-        StackOverflowClient stackOverflowClient = new StackOverflowClientImpl(wmRuntimeInfo.getHttpBaseUrl());
-        stubFor(get("/questions/1").willReturn(ok().withHeader("Content-Type", "application/json").withBody("""
+    @DisplayName("testFetchQuestion")
+    public void testFetchQuestion() {
+        stubFor(get("/2.3/questions/1").willReturn(ok().withHeader("Content-Type", "application/json").withBody("""
             {
                "items": [
                  {

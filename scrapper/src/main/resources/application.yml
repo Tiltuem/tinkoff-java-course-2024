@@ -5,6 +5,23 @@ app:
     force-check-delay: 10s
     checkInterval: 600s
   database-access-type: jdbc
+  retry:
+    scrapper:
+      http-statuses: 429, 500, 502, 503, 504
+      type: linear
+      max-attempts: 10
+      config:
+        initial-interval-millis: 5000
+        max-interval-millis: 50000
+        multiplier: 2
+    bot:
+      http-statuses: 429, 500
+      type: linear
+      max-attempts: 10
+      config:
+        initial-interval-millis: 5000
+        max-interval-millis: 50000
+        multiplier: 2
 
 spring:
   application:
@@ -18,6 +35,11 @@ spring:
       ddl-auto: validate
   liquibase:
     enabled: false
+  cache:
+    cache-names:
+      - scrapper-rate-limit
+    caffeine:
+      spec: maximumSize=200000,expireAfterAccess=60s
 
 
 server:
@@ -37,3 +59,16 @@ stackOverflow:
 bot:
   base:
     url: http://localhost:8090
+
+
+bucket4j:
+  filters:
+    - cache-name: scrapper-rate-limit
+      http-response-body: "{ \"status\": 429, \"error\": \"Too Many Requests\", \"message\": \"Too Many Requests\" }"
+      rate-limits:
+        - bandwidths:
+            - capacity: 100
+              refill-speed: interval
+              time: 1
+              unit: minutes
+      url: /.*
