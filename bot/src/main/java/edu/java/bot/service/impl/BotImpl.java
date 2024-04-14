@@ -46,7 +46,6 @@ public class BotImpl implements Bot {
             processedMessageCounter.increment();
         }
 
-
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
