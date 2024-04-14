@@ -1,5 +1,5 @@
 app:
-  telegram-token:
+  telegram-token: 6986184535:AAENkty0j1ZiWLiD2X2itsjcKHanQ7SnxpU
   retry:
     http-statuses: 429, 500
     type: linear
@@ -14,6 +14,10 @@ app:
       name: updates
       partitions: 2
       replicas: 2
+  micrometer:
+    processed-messages-counter:
+      name: messages.processed
+      description: Number of processed messages from telegram api
 
 client:
   scrapper:
@@ -51,3 +55,25 @@ bucket4j:
               time: 1
               unit: minutes
       url: /.*
+
+management:
+  server:
+    port: 8091
+  endpoints:
+    web:
+      base-path: /
+      path-mapping:
+        prometheus: metrics
+      exposure:
+        include: health,info,prometheus
+    enabled-by-default: false
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}

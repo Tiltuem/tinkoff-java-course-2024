@@ -12,7 +12,9 @@ public record ApplicationConfig(
     @NotNull
     Retry retry,
     @NotNull
-    KafkaConfig kafkaConfig
+    KafkaConfig kafkaConfig,
+    @NotNull
+    Micrometer micrometer
 ) {
     public record Retry(
         Set<Integer> httpStatuses,
@@ -40,5 +42,14 @@ public record ApplicationConfig(
             Integer replicas
         ) {
         }
+    }
+
+    public record Micrometer(
+        ProcessedMessagesCounter processedMessagesCounter
+    ) {
+        public record ProcessedMessagesCounter(
+            String name,
+            String description
+        ) {}
     }
 }
