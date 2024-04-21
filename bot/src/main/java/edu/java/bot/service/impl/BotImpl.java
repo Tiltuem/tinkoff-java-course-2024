@@ -12,6 +12,8 @@ import edu.java.bot.command.Command;
 import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.service.Bot;
 import edu.java.bot.service.MessageProcessorService;
+import io.micrometer.core.instrument.Counter;
+import jakarta.annotation.PostConstruct;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -19,13 +21,16 @@ import org.springframework.stereotype.Component;
 public class BotImpl implements Bot {
     private final TelegramBot telegramBot;
     private final MessageProcessorService messageProcessorService;
+    private final Counter processedMessageCounter;
 
     public BotImpl(
         ApplicationConfig config,
-        MessageProcessorService messageProcessorService
+        MessageProcessorService messageProcessorService,
+        Counter processedMessageCounter
     ) {
         this.telegramBot = new TelegramBot(config.telegramToken());
         this.messageProcessorService = messageProcessorService;
+        this.processedMessageCounter = processedMessageCounter;
         start();
     }
 
@@ -38,6 +43,7 @@ public class BotImpl implements Bot {
     public int process(List<Update> updates) {
         for (var update : updates) {
             telegramBot.execute(messageProcessorService.process(update));
+            processedMessageCounter.increment();
         }
 
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
@@ -49,6 +55,7 @@ public class BotImpl implements Bot {
     }
 
     @Override
+    @PostConstruct
     public void start() {
         createMenu();
         telegramBot.setUpdatesListener(this);
