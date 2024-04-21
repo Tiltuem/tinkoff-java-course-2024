@@ -1,6 +1,7 @@
 package edu.java.service.updater;
 
 import edu.java.bot.BotClient;
+import edu.java.dto.LinkUpdateRequest;
 import edu.java.model.Link;
 import edu.java.service.LinkService;
 import edu.java.service.UserService;
@@ -56,6 +57,6 @@ public class LinkUpdaterScheduler {
 
     private void sendUpdatesToUsers(Link link, String updateMessage) {
         List<Long> userIds = userService.getUsersTrackLink(link.getId());
-        botClient.sendUpdates(link.getId(), link.getUrl().toString(), updateMessage, userIds).block();
+        botClient.sendUpdates(new LinkUpdateRequest(link.getId(), link.getUrl().toString(), updateMessage, userIds));
     }
 }
